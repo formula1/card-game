@@ -2,7 +2,11 @@ use std::io::ErrorKind;
 
 use regex::Regex;
 
-#[path = "../types/Lexer.rs"] mod lexer;
+// use crate::types::Lexer;
+
+use crate::types::Lexer;
+
+// #[path = "../types/Lexer.rs"] mod Lexer;
 #[path = "./tokens/digit.rs"] mod digit;
 #[path = "./tokens/identifier.rs"] mod id;
 #[path = "./tokens/operator.rs"] mod op;
@@ -13,21 +17,20 @@ use regex::Regex;
 
 pub struct CalculatorLexer {}
 
+impl Lexer::Lexer for CalculatorLexer {
 
-impl lexer::Lexer for CalculatorLexer {
-
-  fn getTokenizers() -> Vec<lexer::Tokenizer> {
-      return vec![
-        ws::WhiteSpaceTokenizer{},
-        op::OperatorTokenizer{},
-        digit::DigitTokenizer{},
-        id::IdentifierTokenizer{}
-      ];
+  fn getTokenizers() -> Vec<Lexer::Tokenizer> {
+    return vec![
+      ws::WhiteSpaceTokenizer,
+      op::OperatorTokenizer,
+      digit::DigitTokenizer,
+      id::IdentifierTokenizer
+    ];
   }
 }
 
 impl CalculatorLexer {
   fn isNumberPrefix(input: char)->bool{
-    return input == "🔢";
+    return input == '🔢';
   }
 }

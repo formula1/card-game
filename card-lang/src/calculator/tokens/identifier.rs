@@ -1,38 +1,37 @@
 use std::collections::HashMap;
 use regex::Regex;
 
-#[path = "../../types/Lexer.rs"] mod lex;
+use crate::types::Lexer;
 #[path = "./operator.rs"] mod op;
 #[path = "./digit.rs"] mod digit;
 #[path = "./whitespace.rs"] mod ws;
 
-pub fn matchesChar(input: char){
-  return (
-    !op::matchesChar(input)
-    && !digit::matchesChar(input)
-    && !ws::matchesChar(input)
-  )
-}
 
-pub const IdentifierTokenizer: lex::Tokenizer = lex::Tokenizer {
+pub const IdentifierTokenizer: Lexer::Tokenizer = Lexer::Tokenizer {
   token_type: "identifier".to_string(),
   matchesChar: matchesChar,
-  handlChar: |
-    initial_char: char,
-    advance: fn()->char,
-    addToken: fn(values: HashMap<String, String>)->(),
-  |->Result<(), String>{
-    let identity = "".to_string();
-    identity += initial_char;
-    loop {
-      initial_char = advance();
-      if !matchesChar(initial_char) {
-        break;
-      }
-      identity += initial_char;
-    }
-    addToken(HashMap::from([("name", identity.to_owned())]));
-    advance();
-    return Ok(0);
-  },
+  handleChar: handleChar,
 };
+
+pub fn matchesChar(input: char) -> bool{
+  return !op::matchesChar(input) && !digit::matchesChar(input) && !ws::matchesChar(input);
+}
+
+fn handleChar(
+  c: char,
+  advance: fn()->char,
+  addToken: fn(values: HashMap<String, String>)->(),
+) -> Result<(), String> {
+  let identity = "".to_string();
+  identity.push(c);
+  loop {
+    c = advance();
+    if !matchesChar(c) {
+      break;
+    }
+    identity.push(c);
+  }
+  addToken(HashMap::from([("name".to_string(), identity.to_owned())]));
+  advance();
+  return Ok(());
+}

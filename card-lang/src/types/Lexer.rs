@@ -1,45 +1,45 @@
 
+use core::panic;
 use std::collections::HashMap;
-
-
 
 pub trait Lexer {
   fn getTokenizers() -> Vec<Tokenizer>;
-  fn tokenizeString(input_str: String){
+  fn tokenizeString(input_str: String) -> Result<Vec<Token>, String>{
     let tokenizers = Self::getTokenizers();
     let input_chars = input_str.chars();
     let tokens: Vec<Token> = vec![];
-    let i: usize = 0;
-    let c: char = input_chars.nth(i).unwrap();
+    let mut c = input_chars.next();
     let advance = || {
-      i += 1;
-      c = input_chars.nth(i);
-      return c;
+      c = input_chars.next();
+      if c == None {
+        panic!("No more characters")
+      }
+      return c.unwrap();
     };
-    let token_type = "";
+    let token_type = "".to_string();
     let addToken = |values: HashMap<String, String>| -> () {
-      tokens.push(Token { token_type: token_type, values: values })
+      tokens.push(Token {
+        token_type: token_type.to_string(),
+        values: values
+      })
     };
-    input_str.chars()[i];
-    while i < input_chars.length() {
+    while c != None {
       let usedTokenizer = false;
       for t in tokenizers {
-        if !t.matchesType(c) {
+        if !(t.matchesChar)(c.unwrap()) {
           continue;
         }
         usedTokenizer = true;
-        token_type = t.token_type();
-        let r = t.handleChar(c, i, advance, addToken);
-        match r {
-          Err(e) => {
-            println!("Error parsing the code");
-            return r
-          }
+        token_type = t.token_type;
+        if let Err(e) = (t.handleChar)(c.unwrap(), advance, addToken) {
+          println!("Error parsing the code");
+          return Err(e);
         }
       }
       if usedTokenizer == false {
-        let errmsg = "invalid token " + c + " at point " + i;
-        return Err(errmsg);
+        return Err(
+          format!("invalid token {} at point {}", c.unwrap(), "")
+        );
       }
     }
     return Ok(tokens);
@@ -50,7 +50,7 @@ pub trait Lexer {
 pub struct Tokenizer{
   token_type: String,
   matchesChar: fn(c: char)->bool,
-  handlChar: fn(
+  handleChar: fn(
     initial_char: char,
     advance: fn()->char,
     addToken: fn(values: HashMap<String, String>)->(),
