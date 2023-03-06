@@ -1,25 +1,32 @@
 use std::collections::HashMap;
 use regex::Regex;
 
-#[path = "../../types/Lexer.rs"] mod lex;
+use crate::types::Lexer;
 
-pub fn matchesChar(input: char)-> bool {
-  let re = Regex::new(r"\s]");
-  return re.is_match(input);
-}
-
-pub const WhiteSpaceTokenizer: lex::Tokenizer = lex::Tokenizer {
+pub const WhiteSpaceTokenizer: Lexer::Tokenizer = Lexer::Tokenizer {
   token_type: "whitespace".to_string(),
   matchesChar: matchesChar,
-  handlChar: |
-    initial_char: char,
-    advance: fn()->char,
-    addToken: fn(values: HashMap<String, String>)->(),
-  |->Result<(), String>{
-    advance();
-    return Ok(());
-  },
+  handleChar: handleChar
 };
+
+const ws_regex: Regex = match Regex::new(r"\s]") {
+  Err(e) => panic!("Bad regex in whitespace tokenizer"),
+  Ok(regex) => regex
+};
+
+pub fn matchesChar(input: char) -> bool{
+  return ws_regex.is_match(input.to_string().as_str());
+}
+
+fn handleChar(
+  initial_char: char,
+  advance: fn()->char,
+  addToken: fn(values: HashMap<String, String>)->(),
+) ->Result<(), String> {
+  advance();
+  return Ok(());
+}
+
 
 // impl lex::Tokenizer for WhiteSpaceTokenizer {
 //   fn token_typeStatic()->String {

@@ -1,26 +1,32 @@
 use std::collections::HashMap;
 use regex::Regex;
 
-#[path = "../../types/Lexer.rs"] mod lex;
+use crate::types::Lexer;
 
-
-pub fn matchesChar(input: char)->bool{
-  let re = Regex::new(r"[+\-*\/\^%=(),]");
-  return re.is_match(input.to_string());
-}
-
-pub const OperatorTokenizer: lex::Tokenizer = lex::Tokenizer {
+pub const OperatorTokenizer: Lexer::Tokenizer = Lexer::Tokenizer {
   token_type: "operator".to_string(),
   matchesChar: matchesChar,
-  handlChar: |
-    initial_char: char,
-    advance: fn()->char,
-    addToken: fn(values: HashMap<String, String>)->(),
-  |->Result<(), String>{
-    addToken(
-      HashMap::from([("value", initial_char.to_string())])
-    );
-    advance();
-    return Ok(0);
-  },
+  handleChar: handleChar
 };
+
+const op_regex: Regex = match Regex::new(r"[+\-*\/\^%=(),]") {
+  Err(e) => panic!("Bad regex in operator tokenizer"),
+  Ok(regex) => regex
+};
+
+pub fn matchesChar(input: char) -> bool{
+  return op_regex.is_match(input.to_string().as_str());
+}
+
+fn handleChar(
+  c: char,
+  advance: fn()->char,
+  addToken: fn(values: HashMap<String, String>)->(),
+)-> Result<(), String> {
+  addToken(
+    HashMap::from([("value".to_string(), c.to_string())])
+  );
+  advance();
+  return Ok(());
+}
+
