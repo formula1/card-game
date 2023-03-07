@@ -1,63 +1,93 @@
 
 use core::panic;
-use std::collections::HashMap;
+use std::{collections::HashMap, str::Chars};
 
-pub trait Lexer {
-  fn getTokenizers() -> Vec<Tokenizer>;
-  fn tokenizeString(input_str: String) -> Result<Vec<Token>, String>{
-    let tokenizers = Self::getTokenizers();
-    let input_chars = input_str.chars();
-    let tokens: Vec<Token> = vec![];
-    let mut c = input_chars.next();
-    let advance = || {
-      c = input_chars.next();
-      if c == None {
-        panic!("No more characters")
-      }
-      return c.unwrap();
+use crate::types::ReusedStructs::Token;
+
+#[path = "./Parser.rs"] mod parser;
+
+
+pub struct Lexer<'a> {
+  tokenizers: Vec<Box<dyn Tokenizer>>,
+  current_tokenizer: String,
+  input_chars: Chars<'a>,
+  current_char: Option<char>,
+  tokens: Vec<Token>
+}
+
+impl Lexer<'_> {
+  pub fn new(tokenizers: Vec<Box<dyn Tokenizer>>)-> Lexer<'static> {
+    return Lexer {
+      tokenizers: tokenizers,
+      current_tokenizer: "".to_string(),
+      input_chars: "".chars(),
+      current_char: None,
+      tokens: vec![]
     };
-    let token_type = "".to_string();
-    let addToken = |values: HashMap<String, String>| -> () {
-      tokens.push(Token {
-        token_type: token_type.to_string(),
-        values: values
-      })
-    };
-    while c != None {
+  }
+  fn reset(&mut self){
+    self.current_tokenizer = "".to_string();
+    self.input_chars = "".chars();
+    self.current_char = None;
+    self.tokens = vec![];
+  }
+  pub fn advance(&mut self)->char{
+    let c = self.input_chars.next();
+    self.current_char = c;
+    return self.current_char.unwrap();
+  }
+  pub fn addToken(self, values: HashMap<String, String>){
+    self.tokens.push(Token {
+      token_type: self.current_tokenizer,
+      values: values
+    })
+  }
+  pub fn tokenizeString(&mut self, input_str: String) -> Result<Vec<Token>, String>{
+    let tokenizers = self.tokenizers;
+    self.input_chars = input_str.chars();
+    self.advance();
+
+
+    while self.current_char != None {
       let usedTokenizer = false;
       for t in tokenizers {
-        if !(t.matchesChar)(c.unwrap()) {
+        if !t.matchesChar(self.current_char.unwrap()) {
           continue;
         }
         usedTokenizer = true;
-        token_type = t.token_type;
-        if let Err(e) = (t.handleChar)(c.unwrap(), advance, addToken) {
+        self.current_tokenizer = t.token_type();
+        if let Err(e) = t.handleChar(self.current_char.unwrap(), *self) {
           println!("Error parsing the code");
           return Err(e);
         }
       }
       if usedTokenizer == false {
-        return Err(
-          format!("invalid token {} at point {}", c.unwrap(), "")
-        );
+        panic!("invalid token {}", self.current_char.unwrap());
       }
     }
-    return Ok(tokens);
+    return Ok(self.tokens);
   }
 
 }
 
-pub struct Tokenizer{
-  token_type: String,
-  matchesChar: fn(c: char)->bool,
-  handleChar: fn(
-    initial_char: char,
-    advance: fn()->char,
-    addToken: fn(values: HashMap<String, String>)->(),
-  )->Result<(), String>
+pub trait Tokenizer {
+  fn token_type(self)-> String;
+  fn matchesChar(self, c: char)->bool;
+  fn handleChar(
+    self, c: char, lexer: Lexer
+  )->Result<(), String>;
 }
 
-struct Token {
-  token_type: String,
-  values: HashMap<String, String>,
-}
+// pub struct Tokenizer<Adv, Tok>{
+//   token_type: String,
+//   matchesChar: fn(c: char)->bool,
+//   handleChar: fn(
+//     initial_char: char,
+//     advance: Adv,
+//     addToken: Tok,
+//   )->Result<(), String> where Adv: Fn()->char, Tok: Fn(HashMap<String, String>)->()
+// }
+
+// advance: impl Fn()->char,
+// addToken: fn(values: HashMap<String, String>)->(),
+

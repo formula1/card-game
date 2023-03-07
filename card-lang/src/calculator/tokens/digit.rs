@@ -1,15 +1,25 @@
 use std::collections::HashMap;
 use regex::Regex;
 
-use crate::types::Lexer;
+use crate::types::Lexer::Lexer;
+use crate::types::Lexer::Tokenizer;
 
-struct OperatorTokenizer{}
+pub struct DigitTokenizer{}
 
-pub const DigitTokenizer: Lexer::Tokenizer = Lexer::Tokenizer {
-  token_type: "digit".to_string(),
-  matchesChar: matchesChar,
-  handleChar: handleChar,
-};
+impl Tokenizer for DigitTokenizer {
+  fn token_type(self)->String{
+    return "digit".to_string();
+  }
+  fn matchesChar(self, input: char)->bool{
+    return matchesChar(input)
+  }
+  fn handleChar(
+    self, c: char, lexer: Lexer
+  )->Result<(), String>{
+    return handleChar(c, lexer);
+  }
+}
+
 
 const digit_regex: Regex = match Regex::new(r"[0-9]") {
   Err(e) => panic!("Bad regex in digit tokenizer"),
@@ -20,16 +30,12 @@ pub fn matchesChar(input: char) -> bool{
   return digit_regex.is_match(input.to_string().as_str());
 }
 
-fn handleChar(
-  c: char,
-  advance: fn()->char,
-  addToken: fn(values: HashMap<String, String>)->(),
-) -> Result<(), String>{
+fn handleChar(c: char, lexer: Lexer) -> Result<(), String>{
   let mut num = "".to_owned();
   num.push(c);
   let isFloat = "0";
   loop {
-    c = advance();
+    c = lexer.advance();
     if !matchesChar(c) { break; }
     num.push(c);
   }
@@ -37,11 +43,11 @@ fn handleChar(
     isFloat = "1";
     loop {
       num.push(c);
-      c = advance();
+      c = lexer.advance();
       if !matchesChar(c) { break; }
     }
   }
-  addToken(
+  lexer.addToken(
     HashMap::from([
       ("isFloat".to_string(), isFloat.to_string()),
       ("value".to_string(), num)

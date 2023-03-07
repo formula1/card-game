@@ -15,22 +15,18 @@ use crate::types::Lexer;
 
 // https://www.codeproject.com/Articles/345888/How-to-Write-a-Simple-Interpreter-in-JavaScript
 
-pub struct CalculatorLexer {}
 
-impl Lexer::Lexer for CalculatorLexer {
+pub const CalculatorLexer: Lexer::Lexer = Lexer::Lexer::new(
+  vec![
+    Box::new(ws::WhiteSpaceTokenizer{}),
+    Box::new(op::OperatorTokenizer{}),
+    Box::new(digit::DigitTokenizer{}),
+    Box::new(id::IdentifierTokenizer{})
+  ]
+);
 
-  fn getTokenizers() -> Vec<Lexer::Tokenizer> {
-    return vec![
-      ws::WhiteSpaceTokenizer,
-      op::OperatorTokenizer,
-      digit::DigitTokenizer,
-      id::IdentifierTokenizer
-    ];
-  }
-}
-
-impl CalculatorLexer {
-  fn isNumberPrefix(input: char)->bool{
-    return input == '🔢';
-  }
-}
+// impl CalculatorLexer {
+//   fn isNumberPrefix(input: char)->bool{
+//     return input == '🔢';
+//   }
+// }
