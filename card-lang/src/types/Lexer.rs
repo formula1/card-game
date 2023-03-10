@@ -4,8 +4,6 @@ use std::{collections::HashMap, str::Chars};
 
 use crate::types::ReusedStructs::Token;
 
-#[path = "./Parser.rs"] mod parser;
-
 
 pub struct Lexer<'a> {
   tokenizers: Vec<Box<dyn Tokenizer>>,
