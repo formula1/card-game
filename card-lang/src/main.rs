@@ -11,12 +11,12 @@ mod types {
 }
 
 use calculator::lexer::CalculatorLexer;
+use calculator::parser::CalculatorParser;
 
 fn main() {
     let tokens = CalculatorLexer.tokenizeString(
         "hello world".to_string()
     );
-    let parser = calculator::parser::CalculatorParser::new(tokens);
-    let parsed = 
-    println!("Hello, world!");
+  let trees = CalculatorParser.parse(tokens);
+  println!("Hello, world!");
 }
