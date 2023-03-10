@@ -42,7 +42,7 @@ impl Lexer<'_> {
       values: values
     })
   }
-  pub fn tokenizeString(&mut self, input_str: String) -> Result<Vec<Token>, String>{
+  pub fn tokenizeString(&mut self, input_str: String) -> Vec<Token>{
     let tokenizers = self.tokenizers;
     self.input_chars = input_str.chars();
     self.advance();
@@ -57,15 +57,14 @@ impl Lexer<'_> {
         usedTokenizer = true;
         self.current_tokenizer = t.token_type();
         if let Err(e) = t.handleChar(self.current_char.unwrap(), *self) {
-          println!("Error parsing the code");
-          return Err(e);
+          panic!("Error parsing the code");
         }
       }
       if usedTokenizer == false {
         panic!("invalid token {}", self.current_char.unwrap());
       }
     }
-    return Ok(self.tokens);
+    return self.tokens;
   }
 
 }
