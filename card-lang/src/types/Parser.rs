@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use crate::types::ReusedStructs::Token;
 use crate::types::ReusedStructs::Node;
+use crate::types::ReusedStructs::NodeType;
 
 pub struct Parser {
   symbols: SymbolCollection,
@@ -11,13 +12,50 @@ pub struct Parser {
   tokens: Vec<Token>,
 }
 
+pub struct Symbol {
+  id: String,
+  nud: Option<Box<dyn NudListener>>,
+  lbp: Option<u128>,
+  led: Option<Box<dyn LedListener>>,
+}
+
+pub trait NudListener {
+  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node;
+}
+
+pub trait LedListener {
+  fn run(self, node: Node, parser: Parser)->Node;
+}
+
+pub struct Prefix {
+  id: String,
+  rbp: u128
+}
+
+pub struct Infix {
+  id: String,
+  lbp: u128,
+  rbp: Option<u128>,
+  led: Option<Box<dyn LedListener>>
+}
+
 impl Parser {
-  pub fn new() -> Parser {
-    return Parser {
+  pub fn new(prefixes: Vec<Prefix>, infixes: Vec<Infix>, symbols: Vec<Symbol>) -> Parser {
+    let parser = Parser {
       symbols: SymbolCollection { symbols: HashMap::new() },
       i: 0,
       tokens: vec![]
+    };
+    for prefix in prefixes {
+      parser.prefix(prefix.id.as_str(), prefix.rbp);
     }
+    for infix in infixes {
+      parser.infix(infix.id.as_str(), infix.lbp, infix.rbp, infix.led);
+    }
+    for symbol in symbols {
+      parser.symbol(symbol.id.as_str(), symbol.nud, symbol.lbp, symbol.led);
+    }
+    return parser;
   }
   pub fn token(self) -> SymbolAndToken {
     return self.symbols.interpretToken(self.tokens[self.i]);
@@ -37,7 +75,7 @@ impl Parser {
     if nud.is_none() {
       panic!("Unexpected token: {}", t.token.token_type.as_str());
     }
-    let left = nud.unwrap().run(t);
+    let left = nud.unwrap().run(t, self);
     while rbp < self.token().symbol.lbp.unwrap() {
       t = self.token();
       self.advance();
@@ -45,7 +83,7 @@ impl Parser {
       if led.is_none() {
         panic!("Unexpected token: {}", t.token.token_type.as_str());
       }
-      left = led.unwrap().run(left);
+      left = led.unwrap().run(left, self);
     };
     return left;
   }
@@ -91,30 +129,6 @@ pub struct SymbolCollection {
   symbols: HashMap<String, Symbol>
 }
 
-// pub trait Symbol {
-//   fn own_parser(self)->Parser;
-//   fn get_id(self)->String;
-//   fn nud(self)->Node;
-//   fn lbp(self)->u128;
-//   fn led(self, node: Option<Node>)->Node;
-// }
-
-struct Symbol {
-  owner: SymbolCollection,
-  id: String,
-  nud: Option<Box<dyn NudListener>>,
-  lbp: Option<u128>,
-  led: Option<Box<dyn LedListener>>,
-}
-
-pub trait NudListener {
-  fn run(self, symtok: SymbolAndToken)->Node;
-}
-
-pub trait LedListener {
-  fn run(self, node: Node)->Node;
-}
-
 
 pub struct SymbolAndToken {
   pub symbol: Symbol,
@@ -127,7 +141,6 @@ impl SymbolCollection {
     let maybe_sym = self.symbols.get(&id);
     if maybe_sym.is_none() {
       self.symbols.insert(id, Symbol {
-        owner: self,
         id, nud, lbp, led
       });
     } else {
@@ -138,11 +151,12 @@ impl SymbolCollection {
     }
   }
   fn interpretToken(self, token: Token) -> SymbolAndToken {
-    let maybe_sym = self.symbols.get(&token.token_type);
-    if maybe_sym.is_none() {
-      panic!("Token has no symbol {}", token.token_type);
-    }
-    let sym = maybe_sym.unwrap();
+    let token_type = if token.token_type == "operator" {
+      *token.values.get("value").unwrap()
+    } else {
+      token.token_type
+    };
+    let sym = self.symbols.get(&token_type).unwrap();
     return SymbolAndToken{
       token: token,
       symbol: *sym
@@ -157,7 +171,7 @@ struct DefaultPrefix {
 }
 
 impl NudListener for DefaultPrefix {
-  fn run(self, symtok: SymbolAndToken)->Node{
+  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
 
     let values = HashMap::from([("type".to_string(), self.symbol_id)]);
     let branches = HashMap::from([
@@ -166,11 +180,11 @@ impl NudListener for DefaultPrefix {
 
 
     return Node {
-      node_type: "operator".to_string(),
+      node_type: NodeType::OperatorNode,
       values: Some(values),
-      branches: Some(branches)
-    }  
-
+      branches: Some(branches),
+      args: None,
+    }
   }
 
 }
@@ -182,7 +196,7 @@ struct DefaultInfix {
 }
 
 impl LedListener for DefaultInfix {
-  fn run(self, left: Node)->Node{
+  fn run(self, left: Node, parser: Parser)->Node{
   
     let values = HashMap::from([("type".to_string(), self.symbol_id)]);
     let branches = HashMap::from([
@@ -191,9 +205,10 @@ impl LedListener for DefaultInfix {
     ]);
   
     return Node {
-      node_type: "operator".to_string(),
+      node_type: NodeType::OperatorNode,
       values: Some(values),
-      branches: Some(branches)
+      branches: Some(branches),
+      args: None,
     }  
   }
   
