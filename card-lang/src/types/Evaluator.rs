@@ -63,7 +63,7 @@ impl Evaluator {
     self.functions.insert(id, Funk{ id, numArgs, runner });
   }
 
-  fn evaluate(self, parseTree: Vec<Node>) -> String{
+  pub fn evaluate(self, parseTree: Vec<Node>) -> String{
     let output = "".to_string();
     for node in parseTree {
       let value = self.parseNode(node);

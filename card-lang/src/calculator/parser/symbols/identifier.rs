@@ -37,9 +37,9 @@ impl NudListener for IdentifierNud {
     parser.advance();
     return Node {
       node_type: NodeType::CallNode,
+      values: Some(symtok.token.values),
       args: Some(args),
       branches: None,
-      values: None,
     }
   }
 }

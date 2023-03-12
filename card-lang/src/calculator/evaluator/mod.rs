@@ -7,7 +7,7 @@ use crate::types::Evaluator;
 #[path = "./parts/operators.rs"] mod calc_op;
 #[path = "./parts/prefixes.rs"] mod calc_pre;
 
-pub const CalculatorLexer: Evaluator::Evaluator = Evaluator::Evaluator::new(
+pub const CalculatorEvaluator: Evaluator::Evaluator = Evaluator::Evaluator::new(
   calc_const::constants,
   calc_var::variables,
   calc_pre::prefixes,

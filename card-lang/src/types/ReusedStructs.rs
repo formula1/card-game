@@ -21,15 +21,6 @@ pub enum NodeType {
   FunctionNode
 }
 
-enum PossibleNode {
-  ValueNode,
-  OperatorNode,
-  IdentifierNode,
-  AssignNode,
-  CallNode,
-  FunctionNode
-}
-
 impl Node {
   fn ValueNode(values: HashMap<String, String>) -> Node {
     return Node {

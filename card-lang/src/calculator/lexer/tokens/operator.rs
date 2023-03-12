@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use regex::Regex;
+use lazy_regex::regex_is_match;
 
 use crate::types::Lexer::Lexer;
 use crate::types::Lexer::Tokenizer;
@@ -21,16 +21,11 @@ impl Tokenizer for OperatorTokenizer {
 }
 
 
-const op_regex: Regex = match Regex::new(r"[+\-*\/\^%=(),]") {
-  Err(e) => panic!("Bad regex in operator tokenizer"),
-  Ok(regex) => regex
-};
-
 pub fn matchesChar(input: char) -> bool{
-  return op_regex.is_match(input.to_string().as_str());
+  return regex_is_match!(r"[+\-*/^%=(),]", input.to_string().as_str());
 }
 
-fn handleChar(c: char, lexer: Lexer)-> Result<(), String> {
+fn handleChar(c: char, mut lexer: Lexer)-> Result<(), String> {
   lexer.addToken(
     HashMap::from([("value".to_string(), c.to_string())])
   );

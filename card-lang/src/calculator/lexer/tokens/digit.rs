@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use regex::Regex;
+use lazy_regex::regex_is_match;
 
 use crate::types::Lexer::Lexer;
 use crate::types::Lexer::Tokenizer;
@@ -21,26 +21,22 @@ impl Tokenizer for DigitTokenizer {
 }
 
 
-const digit_regex: Regex = match Regex::new(r"[0-9]") {
-  Err(e) => panic!("Bad regex in digit tokenizer"),
-  Ok(regex) => regex
-};
-
 pub fn matchesChar(input: char) -> bool{
-  return digit_regex.is_match(input.to_string().as_str());
+  return regex_is_match!(r"[0-9]", input.to_string().as_str());
 }
 
-fn handleChar(c: char, lexer: Lexer) -> Result<(), String>{
+fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String>{
+  let mut c: char = initial_char;
   let mut num = "".to_owned();
   num.push(c);
-  let isFloat = "0";
+  let mut is_float = "0";
   loop {
     c = lexer.advance();
     if !matchesChar(c) { break; }
     num.push(c);
   }
   if c == '.' {
-    isFloat = "1";
+    is_float = "1";
     loop {
       num.push(c);
       c = lexer.advance();
@@ -49,7 +45,7 @@ fn handleChar(c: char, lexer: Lexer) -> Result<(), String>{
   }
   lexer.addToken(
     HashMap::from([
-      ("isFloat".to_string(), isFloat.to_string()),
+      ("is_float".to_string(), is_float.to_string()),
       ("value".to_string(), num)
     ])
   );

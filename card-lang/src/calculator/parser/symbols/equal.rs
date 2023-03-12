@@ -13,7 +13,7 @@ pub struct EqualLed{}
 impl LedListener for EqualLed {
   fn run(self, left: Node, parser: Parser) -> Node {
     let name = left.values.unwrap().get("name").unwrap();
-    let node = Node {
+    let mut node = Node {
       node_type: NodeType::AssignNode,
       values: Some(HashMap::from([
         ("name".to_string(), *name),

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use regex::Regex;
+use lazy_regex::regex_is_match;
 
 use crate::types::Lexer::Lexer;
 use crate::types::Lexer::Tokenizer;
@@ -27,8 +28,9 @@ pub fn matchesChar(input: char) -> bool{
   return !op::matchesChar(input) && !digit::matchesChar(input) && !ws::matchesChar(input);
 }
 
-fn handleChar(c: char, lexer: Lexer) -> Result<(), String> {
-  let identity = "".to_string();
+fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String> {
+  let mut c = initial_char;
+  let mut identity = "".to_string();
   identity.push(c);
   loop {
     c = lexer.advance();

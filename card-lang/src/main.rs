@@ -12,13 +12,18 @@ mod types {
   pub mod ReusedStructs;
 }
 
-use calculator::lexer::CalculatorLexer;
-use calculator::parser::CalculatorParser;
+use calculator::lexer::createCalculatorLexer;
+use calculator::parser::createCalculatorParser;
+use calculator::evaluator::CalculatorEvaluator;
 
 fn main() {
-  let tokens = CalculatorLexer.tokenizeString(
-    "hello world".to_string()
-  );
-  let trees = CalculatorParser.parse(tokens);
-  println!("Hello, world!");
+
+  let mut lexer = createCalculatorLexer();
+  let mut parser = createCalculatorParser();
+
+  let input_str = "hello world";
+  let tokens = lexer.tokenizeString(input_str.to_string());
+  let trees = parser.parse(tokens);
+  let output = CalculatorEvaluator.evaluate(trees);
+  println!("{}", output.as_str());
 }

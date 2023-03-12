@@ -34,20 +34,21 @@ impl Lexer<'_> {
     self.current_char = c;
     return self.current_char.unwrap();
   }
-  pub fn addToken(self, values: HashMap<String, String>){
+  pub fn addToken(&mut self, values: HashMap<String, String>){
     self.tokens.push(Token {
       token_type: self.current_tokenizer,
       values: values
     })
   }
   pub fn tokenizeString(&mut self, input_str: String) -> Vec<Token>{
+    self.reset();
     let tokenizers = self.tokenizers;
     self.input_chars = input_str.chars();
     self.advance();
 
 
     while self.current_char != None {
-      let usedTokenizer = false;
+      let mut usedTokenizer = false;
       for t in tokenizers {
         if !t.matchesChar(self.current_char.unwrap()) {
           continue;

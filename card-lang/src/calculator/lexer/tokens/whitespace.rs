@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use regex::Regex;
+use lazy_regex::regex_is_match;
 
 use crate::types::Lexer::Lexer;
 use crate::types::Lexer::Tokenizer;
@@ -20,16 +20,11 @@ impl Tokenizer for WhiteSpaceTokenizer {
   }
 }
 
-const ws_regex: Regex = match Regex::new(r"\s]") {
-  Err(e) => panic!("Bad regex in whitespace tokenizer"),
-  Ok(regex) => regex
-};
-
 pub fn matchesChar(input: char) -> bool{
-  return ws_regex.is_match(input.to_string().as_str());
+  return regex_is_match!(r"[\s]", input.to_string().as_str());
 }
 
-fn handleChar(initial_char: char, lexer: Lexer) ->Result<(), String> {
+fn handleChar(_: char, mut lexer: Lexer) ->Result<(), String> {
   lexer.advance();
   return Ok(());
 }
