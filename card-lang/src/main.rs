@@ -2,7 +2,9 @@
 mod calculator {
   pub mod lexer;
   pub mod parser;
+  pub mod evaluator;
 }
+
 mod types {
   pub mod Lexer;
   pub mod Parser;
