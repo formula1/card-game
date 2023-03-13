@@ -5,15 +5,16 @@ use crate::types::Evaluator::OperatorRunner;
 use crate::types::ReusedStructs::Node;
 use crate::types::ReusedStructs::NodeType;
 
-
-pub const operators: Vec<Operator> = vec![
-  Operator{ id: "+".to_string(), runner: Box::new(AddRunner{}) },
-  Operator{ id: "-".to_string(), runner: Box::new(SubRunner{}) },
-  Operator{ id: "*".to_string(), runner: Box::new(MulRunner{}) },
-  Operator{ id: "/".to_string(), runner: Box::new(DivRunner{}) },
-  Operator{ id: "%".to_string(), runner: Box::new(ModRunner{}) },
-  Operator{ id: "^".to_string(), runner: Box::new(ExpRunner{}) },
-];
+pub fn getOperators() -> Vec<Operator>{
+  return vec![
+    Operator{ id: "+".to_string(), runner: Box::new(AddRunner{}) },
+    Operator{ id: "-".to_string(), runner: Box::new(SubRunner{}) },
+    Operator{ id: "*".to_string(), runner: Box::new(MulRunner{}) },
+    Operator{ id: "/".to_string(), runner: Box::new(DivRunner{}) },
+    Operator{ id: "%".to_string(), runner: Box::new(ModRunner{}) },
+    Operator{ id: "^".to_string(), runner: Box::new(ExpRunner{}) },
+  ]
+}
 
 struct AddRunner{}
 impl OperatorRunner for AddRunner {

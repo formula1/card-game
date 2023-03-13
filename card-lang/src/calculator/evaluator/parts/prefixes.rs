@@ -5,10 +5,11 @@ use crate::types::Evaluator::PrefixRunner;
 use crate::types::ReusedStructs::Node;
 use crate::types::ReusedStructs::NodeType;
 
-
-pub const prefixes: Vec<PrefixOperator> = vec![
-  PrefixOperator{ id: "-".to_string(), runner: Box::new(SubRunner{}) },
-];
+pub fn getPrefixes() -> Vec<PrefixOperator>{
+  return vec![
+    PrefixOperator{ id: "-".to_string(), runner: Box::new(SubRunner{}) },
+  ];
+}
 
 struct SubRunner{}
 impl PrefixRunner for SubRunner {

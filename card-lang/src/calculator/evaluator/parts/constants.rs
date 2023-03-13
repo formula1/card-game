@@ -6,16 +6,29 @@ use crate::types::Evaluator::Constant;
 use crate::types::ReusedStructs::Node;
 use crate::types::ReusedStructs::NodeType;
 
-pub const constants: Vec<Constant> = vec![
-  Constant{
-    id: "pi".to_string(),
-    value: packResult(consts::PI)
-  },
-  Constant{
-    id: "e".to_string(),
-    value: packResult(consts::E)
-  }
-];
+pub fn getConstants() -> Vec<Constant>{
+  vec![
+    Constant{
+      id: "pi".to_string(),
+      value: packResult(consts::PI)
+    },
+    Constant{
+      id: "e".to_string(),
+      value: packResult(consts::E)
+    }
+  ]
+}
+
+// pub const constants: Vec<Constant> = vec![
+//   Constant{
+//     id: "pi".to_string(),
+//     value: packResult(consts::PI)
+//   },
+//   Constant{
+//     id: "e".to_string(),
+//     value: packResult(consts::E)
+//   }
+// ];
 
 
 pub fn packResult(num: f64)->Node{

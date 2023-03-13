@@ -7,10 +7,12 @@ use crate::types::Evaluator;
 #[path = "./parts/operators.rs"] mod calc_op;
 #[path = "./parts/prefixes.rs"] mod calc_pre;
 
-pub const CalculatorEvaluator: Evaluator::Evaluator = Evaluator::Evaluator::new(
-  calc_const::constants,
-  calc_var::variables,
-  calc_pre::prefixes,
-  calc_op::operators,
-  calc_funk::functions,
-);
+pub fn createCalculatorEvaluator() -> Evaluator::Evaluator{
+  return Evaluator::Evaluator::new(
+    calc_const::getConstants(),
+    calc_var::variables,
+    calc_pre::getPrefixes(),
+    calc_op::getOperators(),
+    calc_funk::getFunctions(),
+  )
+}

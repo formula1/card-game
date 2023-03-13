@@ -14,16 +14,19 @@ mod types {
 
 use calculator::lexer::createCalculatorLexer;
 use calculator::parser::createCalculatorParser;
-use calculator::evaluator::CalculatorEvaluator;
+use calculator::evaluator::createCalculatorEvaluator;
+
+use crate::calculator::evaluator;
 
 fn main() {
 
   let mut lexer = createCalculatorLexer();
   let mut parser = createCalculatorParser();
+  let mut evaluator = createCalculatorEvaluator();
 
   let input_str = "hello world";
   let tokens = lexer.tokenizeString(input_str.to_string());
   let trees = parser.parse(tokens);
-  let output = CalculatorEvaluator.evaluate(trees);
+  let output = evaluator.evaluate(trees);
   println!("{}", output.as_str());
 }

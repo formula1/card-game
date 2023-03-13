@@ -10,39 +10,39 @@ use crate::types::ReusedStructs::NodeType;
 #[path = "./round.rs"] mod round;
 #[path = "./utility.rs"] mod util;
 
+pub fn getFunctions() -> Vec<Funk>{
+  return vec![
+    // Operations without a sign
+    Funk { id: "log".to_string(), numArgs: 2, runner: Box::new(ops::LogRunner{}) },
 
-pub const functions: Vec<Funk> = vec![
-  // Operations without a sign
-  Funk { id: "log".to_string(), numArgs: 2, runner: Box::new(ops::LogRunner{}) },
+    // Utility Functions
+    Funk { id: "abs".to_string(), numArgs: 1, runner: Box::new(util::AbsRunner{}) },
+    Funk { id: "max".to_string(), numArgs: 2, runner: Box::new(util::MaxRunner{}) },
+    Funk { id: "min".to_string(), numArgs: 2, runner: Box::new(util::MinRunner{}) },
 
-  // Utility Functions
-  Funk { id: "abs".to_string(), numArgs: 1, runner: Box::new(util::AbsRunner{}) },
-  Funk { id: "max".to_string(), numArgs: 2, runner: Box::new(util::MaxRunner{}) },
-  Funk { id: "min".to_string(), numArgs: 2, runner: Box::new(util::MinRunner{}) },
+    // Trigonometry
+    Funk { id: "sin".to_string(), numArgs: 1, runner: Box::new(trig::SinRunner{}) },
+    Funk { id: "cos".to_string(), numArgs: 1, runner: Box::new(trig::CosRunner{}) },
+    Funk { id: "tan".to_string(), numArgs: 1, runner: Box::new(trig::TanRunner{}) },
+    Funk { id: "asin".to_string(), numArgs: 1, runner: Box::new(trig::ASinRunner{}) },
+    Funk { id: "acos".to_string(), numArgs: 1, runner: Box::new(trig::ACosRunner{}) },
+    Funk { id: "atan".to_string(), numArgs: 1, runner: Box::new(trig::ATanRunner{}) },
 
-  // Trigonometry
-  Funk { id: "sin".to_string(), numArgs: 1, runner: Box::new(trig::SinRunner{}) },
-  Funk { id: "cos".to_string(), numArgs: 1, runner: Box::new(trig::CosRunner{}) },
-  Funk { id: "tan".to_string(), numArgs: 1, runner: Box::new(trig::TanRunner{}) },
-  Funk { id: "asin".to_string(), numArgs: 1, runner: Box::new(trig::ASinRunner{}) },
-  Funk { id: "acos".to_string(), numArgs: 1, runner: Box::new(trig::ACosRunner{}) },
-  Funk { id: "atan".to_string(), numArgs: 1, runner: Box::new(trig::ATanRunner{}) },
+    // Rounding
+    Funk { id: "round".to_string(), numArgs: 1, runner: Box::new(round::RoundRunner{}) },
+    Funk { id: "ceil".to_string(), numArgs: 1, runner: Box::new(round::CeilRunner{}) },
+    Funk { id: "floor".to_string(), numArgs: 1, runner: Box::new(round::FloorRunner{}) },
+    Funk { id: "flip_round".to_string(), numArgs: 1, runner: Box::new(round::FlipRunner{}) },
+    Funk { id: "prob_round".to_string(), numArgs: 1, runner: Box::new(round::ProbRunner{}) },
 
-  // Rounding
-  Funk { id: "round".to_string(), numArgs: 1, runner: Box::new(round::RoundRunner{}) },
-  Funk { id: "ceil".to_string(), numArgs: 1, runner: Box::new(round::CeilRunner{}) },
-  Funk { id: "floor".to_string(), numArgs: 1, runner: Box::new(round::FloorRunner{}) },
-  Funk { id: "flip_round".to_string(), numArgs: 1, runner: Box::new(round::FlipRunner{}) },
-  Funk { id: "prob_round".to_string(), numArgs: 1, runner: Box::new(round::ProbRunner{}) },
+      // Not used
+    /*
+      exp: Math.exp, (use constant E and ^)
+      sqrt: Math.sqrt, (use ^(1/2))
+    */
 
-    // Not used
-  /*
-    exp: Math.exp, (use constant E and ^)
-    sqrt: Math.sqrt, (use ^(1/2))
-   */
-
-];
-
+  ];
+}
 
 pub fn extractNumbers(nums: Vec<Node>) -> Vec<f64> {
   return nums.iter().map(|node|-> f64 {
