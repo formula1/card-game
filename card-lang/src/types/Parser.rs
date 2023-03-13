@@ -58,10 +58,10 @@ impl Parser {
     return parser;
   }
   pub fn token(self) -> SymbolAndToken {
-    return self.symbols.interpretToken(self.tokens[self.i]);
+    return self.symbols.interpretToken(self.tokens[self.i].clone());
   }
   pub fn nextToken(self) -> Token {
-    return self.tokens[self.i + 1];
+    return self.tokens[self.i + 1].clone();
   }
   pub fn advance(&mut self) -> SymbolAndToken{
     self.i += 1;
@@ -140,7 +140,7 @@ impl SymbolCollection {
     let id = id_str.to_string();
     let maybe_sym = self.symbols.get(&id);
     if maybe_sym.is_none() {
-      self.symbols.insert(id, Symbol {
+      self.symbols.insert(id.clone(), Symbol {
         id, nud, lbp, led
       });
     } else {
@@ -152,9 +152,9 @@ impl SymbolCollection {
   }
   fn interpretToken(self, token: Token) -> SymbolAndToken {
     let token_type = if token.token_type == "operator" {
-      *token.values.get("value").unwrap()
+      token.values.get("value").unwrap().clone()
     } else {
-      token.token_type
+      token.token_type.clone()
     };
     let sym = self.symbols.get(&token_type).unwrap();
     return SymbolAndToken{

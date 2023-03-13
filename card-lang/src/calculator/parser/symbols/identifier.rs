@@ -11,11 +11,12 @@ use crate::types::ReusedStructs::Token;
 pub struct IdentifierNud {}
 
 impl NudListener for IdentifierNud {
-  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
+  fn run(self, symtok: SymbolAndToken, mut parser: Parser)->Node{
+    let token = symtok.token.clone();
     if !isOpener(symtok.token) {
       return Node {
         node_type: NodeType::IdentifierNode,
-        values: Some(symtok.token.values),
+        values: Some(token.values),
         branches: None,
         args: None
       }
@@ -37,7 +38,7 @@ impl NudListener for IdentifierNud {
     parser.advance();
     return Node {
       node_type: NodeType::CallNode,
-      values: Some(symtok.token.values),
+      values: Some(token.values),
       args: Some(args),
       branches: None,
     }
@@ -48,7 +49,7 @@ fn isOpener(token: Token) -> bool {
   if token.token_type != "operator" {
     return false
   }
-  let str = *token.values.get("value").unwrap();
+  let str: String = token.values.get("value").unwrap().clone();
   if  str != "(".to_string() {
     return false;
   }
@@ -59,7 +60,7 @@ fn isCloser(token: Token) -> bool {
   if token.token_type != "operator" {
     return false
   }
-  let str = *token.values.get("value").unwrap();
+  let str = token.values.get("value").unwrap().clone();
   if  str != ")".to_string() {
     return false;
   }
@@ -70,7 +71,7 @@ fn isComma(token: Token) -> bool {
   if token.token_type != "operator" {
     return false
   }
-  let str = *token.values.get("value").unwrap();
+  let str = token.values.get("value").unwrap().clone();
   if  str != ",".to_string() {
     return false;
   }

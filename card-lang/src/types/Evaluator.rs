@@ -30,37 +30,37 @@ impl Evaluator {
       functions: HashMap::new(),
     };
     for value in constants {
-      evaluator.constants.insert(value.id, value);
+      evaluator.constants.insert(value.id.clone(), value);
     }
     for value in variables {
-      evaluator.variables.insert(value.id, value);
+      evaluator.variables.insert(value.id.clone(), value);
     }
     for value in prefixes {
-      evaluator.prefixes.insert(value.id, value);
+      evaluator.prefixes.insert(value.id.clone(), value);
     }
     for value in operators {
-      evaluator.operators.insert(value.id, value);
+      evaluator.operators.insert(value.id.clone(), value);
     }
     for value in functions {
-      evaluator.functions.insert(value.id, value);
+      evaluator.functions.insert(value.id.clone(), value);
     }
     return evaluator;
   }
 
-  fn addConst(&mut self, id: String, value: Node){
-    self.constants.insert(id, Constant{ id, value });
+  fn addConst(&mut self, constant: Constant){
+    self.constants.insert(constant.id.clone(), constant);
   }
-  fn addVar(&mut self, id: String, value: Node){
-    self.variables.insert(id, Variable{ id, value });
+  fn addVar(&mut self, variable: Variable){
+    self.variables.insert(variable.id.clone(), variable);
   }
-  fn addPre(&mut self, id: String, runner: Box<dyn PrefixRunner>){
-    self.prefixes.insert(id, PrefixOperator{id, runner});
+  fn addPre(&mut self, prefix: PrefixOperator){
+    self.prefixes.insert(prefix.id.clone(), prefix);
   }
-  fn addOp(&mut self, id: String, runner: Box<dyn OperatorRunner>){
-    self.operators.insert(id, Operator{id, runner});
+  fn addOp(&mut self, operator: Operator){
+    self.operators.insert(operator.id.clone(), operator);
   }
-  fn addFunk(&mut self, id: String, numArgs: u128, runner: Box<dyn FunkRunner>){
-    self.functions.insert(id, Funk{ id, numArgs, runner });
+  fn addFunk(&mut self, funk: Funk){
+    self.functions.insert(funk.id.clone(), funk);
   }
 
   pub fn evaluate(self, parseTree: Vec<Node>) -> String{
@@ -93,28 +93,32 @@ impl Evaluator {
         }
       }
       NodeType::IdentifierNode=>{
-        let name = node.values.unwrap().get("value").unwrap();
-        if self.arguments.contains_key(name) {
-          return self.arguments.get(name).unwrap().value;
-        } else if self.constants.contains_key(name) {
-          return self.constants.get(name).unwrap().value;
-        } else if self.variables.contains_key(name) {
-          return self.variables.get(name).unwrap().value;
+        let name = node.values.unwrap().get("value").unwrap().clone();
+        if self.arguments.contains_key(&name) {
+          return self.arguments.get(&name).unwrap().value.clone();
+        } else if self.constants.contains_key(&name) {
+          return self.constants.get(&name).unwrap().value.clone();
+        } else if self.variables.contains_key(&name) {
+          return self.variables.get(&name).unwrap().value.clone();
         } else {
           panic!("identifier {} doesn't exist", name);
         }
       }
       NodeType::AssignNode=>{
-        let name = *node.values.unwrap().get(&"name".to_string()).unwrap();
-        let value = self.parseNode(*node.branches.unwrap().get(&"value".to_string()).unwrap());
-        self.variables.insert(name, Variable{ id: name, value });
+        let name = node.values.unwrap().get(&"name".to_string()).unwrap().clone();
+        let value = self.parseNode(
+          node.branches.unwrap().get(&"value".to_string()).unwrap().clone()
+        );
+        self.variables.insert(name, Variable{ id: name, value: value.clone() });
         return value
       }
       NodeType::CallNode=>{
         let vals: Vec<Node> = node.args.unwrap().iter()
-        .map(|arg: &Node|-> Node { return self.parseNode(*arg) })
+        .map(|arg: &Node|-> Node { return self.parseNode(arg.clone()) })
         .collect();
-        return self.functions.get(node.values.unwrap().get("name").unwrap()).unwrap().runner.run(vals);
+        return self.functions.get(
+          &node.values.unwrap().get("name").unwrap().clone()
+        ).unwrap().runner.run(vals);
       }
       NodeType::FunctionNode=>{
         panic!("Haven't enabled function nodes");
@@ -165,7 +169,7 @@ impl Evaluator {
         }
       }
       "string" => {
-        return values["value"];
+        return values.get(&"value".to_string()).unwrap().clone();
       }
       _ => {
         panic!("value typ")

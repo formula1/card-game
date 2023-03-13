@@ -9,12 +9,12 @@ use crate::types::ReusedStructs::NodeType;
 pub struct NumberNud {}
 
 impl NudListener for NumberNud {
-  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
+  fn run(self, symtok: SymbolAndToken, _: Parser)->Node{
     return Node {
       node_type: NodeType::ValueNode,
       values: Some(HashMap::from([
-        ("isFLoat".to_string(), *symtok.token.values.get("isFloat").unwrap()),
-        ("value".to_string(), *symtok.token.values.get("value").unwrap()),
+        ("isFLoat".to_string(), symtok.token.values.get("isFloat").unwrap().clone()),
+        ("value".to_string(), symtok.token.values.get("value").unwrap().clone()),
       ])),
       branches: None,
       args: None

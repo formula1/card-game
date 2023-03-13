@@ -36,7 +36,7 @@ impl Lexer<'_> {
   }
   pub fn addToken(&mut self, values: HashMap<String, String>){
     self.tokens.push(Token {
-      token_type: self.current_tokenizer,
+      token_type: self.current_tokenizer.clone(),
       values: values
     })
   }

@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct Token {
   pub token_type: String,
   pub values: HashMap<String, String>,
 }
 
+#[derive(Clone)]
 pub struct Node {
   pub node_type: NodeType,
   pub values: Option<HashMap<String, String>>,
@@ -12,6 +14,7 @@ pub struct Node {
   pub args: Option<Vec<Node>>,
 }
 
+#[derive(Clone)]
 pub enum NodeType {
   ValueNode,
   OperatorNode,

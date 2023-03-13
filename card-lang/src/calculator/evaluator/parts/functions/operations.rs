@@ -20,7 +20,7 @@ pub fn extractNumbers(nums: Vec<Node>) -> Vec<f64> {
     if !matches!(node.node_type, NodeType::ValueNode) {
       panic!("an argument node_type is not ValueNode");
     } 
-    node.values.unwrap()["value"].parse::<f64>().unwrap()
+    node.values.clone().unwrap()["value"].parse::<f64>().unwrap()
   }).collect();
 }
 
