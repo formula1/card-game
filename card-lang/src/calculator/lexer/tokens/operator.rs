@@ -7,14 +7,14 @@ use crate::types::Lexer::Tokenizer;
 pub struct OperatorTokenizer{}
 
 impl Tokenizer for OperatorTokenizer {
-  fn token_type(self)->String{
+  fn token_type(&self)->String{
     return "operator".to_string();
   }
-  fn matchesChar(self, input: char)->bool{
+  fn matchesChar(&self, input: char)->bool{
     return matchesChar(input)
   }
   fn handleChar(
-    self, c: char, lexer: Lexer
+    &self, c: char, lexer: Lexer
   )->Result<(), String>{
     return handleChar(c, lexer);
   }

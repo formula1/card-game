@@ -18,7 +18,7 @@ pub fn getOperators() -> Vec<Operator>{
 
 struct AddRunner{}
 impl OperatorRunner for AddRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num + b_num);
   }
@@ -26,7 +26,7 @@ impl OperatorRunner for AddRunner {
 
 struct SubRunner{}
 impl OperatorRunner for SubRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num - b_num);
   }
@@ -34,7 +34,7 @@ impl OperatorRunner for SubRunner {
 
 struct MulRunner{}
 impl OperatorRunner for MulRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num * b_num);
   }
@@ -42,7 +42,7 @@ impl OperatorRunner for MulRunner {
 
 struct DivRunner{}
 impl OperatorRunner for DivRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num / b_num);
   }
@@ -50,7 +50,7 @@ impl OperatorRunner for DivRunner {
 
 struct ModRunner{}
 impl OperatorRunner for ModRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num % b_num);
   }
@@ -58,7 +58,7 @@ impl OperatorRunner for ModRunner {
 
 struct ExpRunner{}
 impl OperatorRunner for ExpRunner {
-  fn run(self, a: Node, b: Node )-> Node {
+  fn run(&self, a: Node, b: Node )-> Node {
     let (a_num, b_num) = extractNumbers(a, b);
     return packResult(a_num.powf(b_num));
   }

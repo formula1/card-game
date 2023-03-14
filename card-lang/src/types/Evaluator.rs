@@ -216,7 +216,7 @@ pub struct PrefixOperator {
 }
 
 pub trait PrefixRunner {
-  fn run(self, a: Node)->Node;
+  fn run(&self, a: Node)->Node;
 }
 
 pub struct Operator {
@@ -225,7 +225,7 @@ pub struct Operator {
 }
 
 pub trait OperatorRunner {
-  fn run(self, a: Node, b: Node)->Node;
+  fn run(&self, a: Node, b: Node)->Node;
 }
 
 pub struct Funk {
@@ -235,7 +235,7 @@ pub struct Funk {
 }
 
 pub trait FunkRunner {
-  fn run(self, args: Vec<Node> )->Node;
+  fn run(&self, args: Vec<Node> )->Node;
 }
 
 struct CreatedFunk {

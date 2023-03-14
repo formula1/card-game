@@ -7,14 +7,14 @@ use crate::types::Lexer::Tokenizer;
 pub struct DigitTokenizer{}
 
 impl Tokenizer for DigitTokenizer {
-  fn token_type(self)->String{
+  fn token_type(&self)->String{
     return "digit".to_string();
   }
-  fn matchesChar(self, input: char)->bool{
+  fn matchesChar(&self, input: char)->bool{
     return matchesChar(input)
   }
   fn handleChar(
-    self, c: char, lexer: Lexer
+    &self, c: char, lexer: Lexer
   )->Result<(), String>{
     return handleChar(c, lexer);
   }

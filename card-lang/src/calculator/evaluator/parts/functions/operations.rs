@@ -8,7 +8,7 @@ use crate::types::ReusedStructs::NodeType;
 
 pub struct LogRunner{}
 impl FunkRunner for LogRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].log(nums[1]));
   }

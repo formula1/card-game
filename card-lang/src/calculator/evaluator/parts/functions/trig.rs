@@ -8,7 +8,7 @@ use crate::types::ReusedStructs::NodeType;
 
 pub struct SinRunner{}
 impl FunkRunner for SinRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].sin());
   }
@@ -16,7 +16,7 @@ impl FunkRunner for SinRunner {
 
 pub struct CosRunner{}
 impl FunkRunner for CosRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].cos());
   }
@@ -24,7 +24,7 @@ impl FunkRunner for CosRunner {
 
 pub struct TanRunner{}
 impl FunkRunner for TanRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].tan());
   }
@@ -32,7 +32,7 @@ impl FunkRunner for TanRunner {
 
 pub struct ASinRunner{}
 impl FunkRunner for ASinRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].asin());
   }
@@ -40,7 +40,7 @@ impl FunkRunner for ASinRunner {
 
 pub struct ACosRunner{}
 impl FunkRunner for ACosRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].acos());
   }
@@ -48,7 +48,7 @@ impl FunkRunner for ACosRunner {
 
 pub struct ATanRunner{}
 impl FunkRunner for ATanRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].atan());
   }

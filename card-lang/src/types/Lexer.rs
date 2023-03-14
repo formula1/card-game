@@ -69,10 +69,10 @@ impl Lexer<'_> {
 }
 
 pub trait Tokenizer {
-  fn token_type(self)-> String;
-  fn matchesChar(self, c: char)->bool;
+  fn token_type(&self)-> String;
+  fn matchesChar(&self, c: char)->bool;
   fn handleChar(
-    self, c: char, lexer: Lexer
+    &self, c: char, lexer: Lexer
   )->Result<(), String>;
 }
 

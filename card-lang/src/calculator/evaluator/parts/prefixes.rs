@@ -13,7 +13,7 @@ pub fn getPrefixes() -> Vec<PrefixOperator>{
 
 struct SubRunner{}
 impl PrefixRunner for SubRunner {
-  fn run(self, a: Node)-> Node {
+  fn run(&self, a: Node)-> Node {
     let a_num = extractNumber(a);
     return packResult(-1_f64 * a_num);
   }

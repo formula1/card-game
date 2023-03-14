@@ -9,7 +9,7 @@ use crate::types::ReusedStructs::NodeType;
 
 pub struct RoundRunner{}
 impl FunkRunner for RoundRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].round());
   }
@@ -17,7 +17,7 @@ impl FunkRunner for RoundRunner {
 
 pub struct CeilRunner{}
 impl FunkRunner for CeilRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].ceil());
   }
@@ -25,7 +25,7 @@ impl FunkRunner for CeilRunner {
 
 pub struct FloorRunner{}
 impl FunkRunner for FloorRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].floor());
   }
@@ -37,7 +37,7 @@ fn random() -> f64 {
 
 pub struct FlipRunner{}
 impl FunkRunner for FlipRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     if nums[0] % 1_f64 > 0_f64 && random() > 0.5 {
       nums[0] = nums[0] + 1_f64;
@@ -48,7 +48,7 @@ impl FunkRunner for FlipRunner {
 
 pub struct ProbRunner{}
 impl FunkRunner for ProbRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     let remainder = nums[0] % 1_f64;
     if remainder > 0_f64 && random() < remainder {

@@ -8,7 +8,7 @@ use crate::types::ReusedStructs::NodeType;
 
 pub struct AbsRunner{}
 impl FunkRunner for AbsRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].abs());
   }
@@ -16,7 +16,7 @@ impl FunkRunner for AbsRunner {
 
 pub struct MaxRunner{}
 impl FunkRunner for MaxRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].max(nums[1]));
   }
@@ -24,7 +24,7 @@ impl FunkRunner for MaxRunner {
 
 pub struct MinRunner{}
 impl FunkRunner for MinRunner {
-  fn run(self, args: Vec<Node> )-> Node {
+  fn run(&self, args: Vec<Node> )-> Node {
     let nums = extractNumbers(args);
     return packResult(nums[0].min(nums[1]));
   }
