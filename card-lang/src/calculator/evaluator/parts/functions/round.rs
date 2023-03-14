@@ -38,7 +38,7 @@ fn random() -> f64 {
 pub struct FlipRunner{}
 impl FunkRunner for FlipRunner {
   fn run(&self, args: Vec<Node> )-> Node {
-    let nums = extractNumbers(args);
+    let mut nums = extractNumbers(args);
     if nums[0] % 1_f64 > 0_f64 && random() > 0.5 {
       nums[0] = nums[0] + 1_f64;
     }
@@ -49,7 +49,7 @@ impl FunkRunner for FlipRunner {
 pub struct ProbRunner{}
 impl FunkRunner for ProbRunner {
   fn run(&self, args: Vec<Node> )-> Node {
-    let nums = extractNumbers(args);
+    let mut nums = extractNumbers(args);
     let remainder = nums[0] % 1_f64;
     if remainder > 0_f64 && random() < remainder {
       nums[0] = nums[0] + 1_f64;

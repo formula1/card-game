@@ -11,7 +11,7 @@ use crate::types::ReusedStructs::Token;
 pub struct IdentifierNud {}
 
 impl NudListener for IdentifierNud {
-  fn run(self, symtok: SymbolAndToken, mut parser: Parser)->Node{
+  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
     let token = symtok.token.clone();
     if !isOpener(symtok.token) {
       return Node {
@@ -22,7 +22,7 @@ impl NudListener for IdentifierNud {
       }
     }
 
-    let args: Vec<Node> = vec![];
+    let mut args: Vec<Node> = vec![];
     if isCloser(parser.nextToken()) {
       parser.advance();
     } else {

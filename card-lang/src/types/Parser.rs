@@ -75,7 +75,7 @@ impl Parser {
     if nud.is_none() {
       panic!("Unexpected token: {}", t.token.token_type.as_str());
     }
-    let left = nud.unwrap().run(t, self);
+    let mut left = nud.unwrap().run(t, self);
     while rbp < self.token().symbol.lbp.unwrap() {
       t = self.token();
       self.advance();
@@ -90,7 +90,7 @@ impl Parser {
 
   pub fn parse(&mut self, tokens: Vec<Token>)->Vec<Node>{
     self.tokens = tokens;
-    let parseTree = vec![];
+    let mut parseTree = vec![];
 
     while self.token().token.token_type != "(end)" {
       parseTree.push(self.expression(0));
@@ -99,7 +99,7 @@ impl Parser {
     return parseTree;
   }
 
-  pub fn symbol(&mut self, id: &str, nud: Option<Box<dyn NudListener>>, lbp: Option<u128>, led: Option<Box<dyn LedListener>>){
+  pub fn symbol(self, id: &str, nud: Option<Box<dyn NudListener>>, lbp: Option<u128>, led: Option<Box<dyn LedListener>>){
     self.symbols.setSymbol(id, nud, lbp, led);
   }
 
@@ -136,7 +136,7 @@ pub struct SymbolAndToken {
 }
 
 impl SymbolCollection {
-  fn setSymbol(self, id_str: &str, nud: Option<Box<dyn NudListener>>, lbp: Option<u128>, led: Option<Box<dyn LedListener>>){
+  fn setSymbol(mut self, id_str: &str, nud: Option<Box<dyn NudListener>>, lbp: Option<u128>, led: Option<Box<dyn LedListener>>){
     let id = id_str.to_string();
     let maybe_sym = self.symbols.get(&id);
     if maybe_sym.is_none() {

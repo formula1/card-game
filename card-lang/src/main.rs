@@ -20,9 +20,9 @@ use crate::calculator::evaluator;
 
 fn main() {
 
-  let mut lexer = createCalculatorLexer();
-  let mut parser = createCalculatorParser();
-  let mut evaluator = createCalculatorEvaluator();
+  let lexer = createCalculatorLexer();
+  let parser = createCalculatorParser();
+  let evaluator = createCalculatorEvaluator();
 
   let input_str = "hello world";
   let tokens = lexer.tokenizeString(input_str.to_string());

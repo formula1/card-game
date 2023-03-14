@@ -64,16 +64,16 @@ impl Evaluator {
   }
 
   pub fn evaluate(self, parseTree: Vec<Node>) -> String{
-    let output = "".to_string();
+    let mut output = "".to_string();
     for node in parseTree {
       let value = self.parseNode(node);
-      output.push_str(self.nodeToString(value).as_str());
+      output.push_str(Evaluator::nodeToString(value).as_str());
       output.push_str("\n");
     }
     return output;
   }
 
-  fn parseNode(self, node: Node) -> Node{
+  fn parseNode(mut self, node: Node) -> Node{
     return match node.node_type {
       NodeType::ValueNode=>{
         return node
