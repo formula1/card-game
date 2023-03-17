@@ -12,6 +12,10 @@ mod types {
   pub mod ReusedStructs;
 }
 
+mod help {
+  pub mod trait_boxes_use;
+}
+
 use calculator::lexer::createCalculatorLexer;
 use calculator::parser::createCalculatorParser;
 use calculator::evaluator::createCalculatorEvaluator;
