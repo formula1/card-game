@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use crate::types::Evaluator::Funk;
-use crate::types::Evaluator::FunkRunner;
 use crate::types::ReusedStructs::Node;
 use crate::types::ReusedStructs::NodeType;
 

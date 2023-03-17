@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use rand::rngs::ThreadRng;
-use crate::types::Evaluator::Funk;
 use crate::types::Evaluator::FunkRunner;
 
 use crate::types::ReusedStructs::Node;

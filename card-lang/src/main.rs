@@ -16,8 +16,6 @@ use calculator::lexer::createCalculatorLexer;
 use calculator::parser::createCalculatorParser;
 use calculator::evaluator::createCalculatorEvaluator;
 
-use crate::calculator::evaluator;
-
 fn main() {
 
   let lexer = createCalculatorLexer();

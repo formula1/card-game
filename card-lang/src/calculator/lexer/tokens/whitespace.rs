@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use lazy_regex::regex_is_match;
 
 use crate::types::Lexer::Lexer;
