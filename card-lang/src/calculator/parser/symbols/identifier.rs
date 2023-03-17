@@ -23,19 +23,27 @@ impl NudListener for IdentifierNud {
     }
 
     let mut args: Vec<Node> = vec![];
-    if isCloser(parser.nextToken()) {
-      parser.advance();
+    let (p, t) = parser.nextToken();
+    let mut p1 = p;
+    let mut n:Node;
+    if isCloser(t) {
+      (p1, _) = p1.advance();
     } else {
       loop {
-        parser.advance();
-        args.push(parser.expression(2));
-        if!isComma(parser.token().token) { break }
+        (p1, _) = p1.advance();
+        (p1, n) = p1.expression(2);
+        args.push(n);
+        let t: SymbolAndToken;
+        (p1, t) = p1.token();
+        if!isComma(t.token) { break }
       }
-      if !isCloser(parser.token().token) {
+      let t: SymbolAndToken;
+      (p1, t) = p1.token();
+      if !isCloser(t.token) {
         panic!("Expected closing parenthesis ')'");
       };
     }
-    parser.advance();
+    p1.advance();
     return Node {
       node_type: NodeType::CallNode,
       values: Some(token.values),

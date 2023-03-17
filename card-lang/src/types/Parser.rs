@@ -57,43 +57,57 @@ impl Parser {
     }
     return parser;
   }
-  pub fn token(self) -> SymbolAndToken {
-    return self.symbols.interpretToken(self.tokens[self.i].clone());
+  pub fn token(self) -> (Self, SymbolAndToken) {
+    return (
+      self,
+      self.symbols.interpretToken(self.tokens[self.i].clone())
+    );
   }
-  pub fn nextToken(self) -> Token {
-    return self.tokens[self.i + 1].clone();
+  pub fn nextToken(self) -> (Self, Token) {
+    return (
+      self,
+      self.tokens[self.i + 1].clone()
+    );
   }
-  pub fn advance(&mut self) -> SymbolAndToken{
+  pub fn advance(mut self) -> (Self, SymbolAndToken){
     self.i += 1;
-    return self.token();
+    return self.token()
   }
 
-  pub fn expression(self, rbp: u128) -> Node {
-    let t = self.token();
-    self.advance();
-    let nud = t.symbol.nud;
+  pub fn expression(self, rbp: u128) -> (Self, Node) {
+   let (s1, t1) = self.token();
+    s1.advance();
+    let nud = t1.symbol.nud;
     if nud.is_none() {
-      panic!("Unexpected token: {}", t.token.token_type.as_str());
+      panic!("Unexpected token: {}", t1.token.token_type.as_str());
     }
-    let mut left = nud.unwrap().run(t, self);
-    while rbp < self.token().symbol.lbp.unwrap() {
-      t = self.token();
+    let mut left = nud.unwrap().run(t1, self);
+    loop {
+      let (s, t) = s1.token();
+      if rbp < t.symbol.lbp.unwrap() { break; }
+      let token = self.token();
       self.advance();
-      let led = t.symbol.led;
-      if led.is_none() {
+      let led_op = t.symbol.led;
+      if led_op.is_none() {
         panic!("Unexpected token: {}", t.token.token_type.as_str());
       }
-      left = led.unwrap().run(left, self);
+      let led = led_op.unwrap();
+
+      left = led.run(left, self);
     };
-    return left;
+    return (self, left);
   }
 
-  pub fn parse(&mut self, tokens: Vec<Token>)->Vec<Node>{
+  pub fn parse(mut self, tokens: Vec<Token>)->Vec<Node>{
     self.tokens = tokens;
     let mut parseTree = vec![];
-
-    while self.token().token.token_type != "(end)" {
-      parseTree.push(self.expression(0));
+    let mut s = self;
+    let mut n: Node;
+    loop {
+      let (s, t) = self.token();
+      if t.token.token_type == "(end)" { break }
+      (s, n) = s.expression(0);
+      parseTree.push(n);
     }
 
     return parseTree;
@@ -174,8 +188,9 @@ impl NudListener for DefaultPrefix {
   fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
 
     let values = HashMap::from([("type".to_string(), self.symbol_id)]);
+    let (s, n) = self.parser.expression(self.rbp);
     let branches = HashMap::from([
-      ("right".to_string(), self.parser.expression(self.rbp)),
+      ("right".to_string(), n),
     ]);
 
 
@@ -199,9 +214,10 @@ impl LedListener for DefaultInfix {
   fn run(self, left: Node, parser: Parser)->Node{
   
     let values = HashMap::from([("type".to_string(), self.symbol_id)]);
+    let (s, n ) = self.parser.expression(self.rbp);
     let branches = HashMap::from([
       ("left".to_string(), left),
-      ("right".to_string(), self.parser.expression(self.rbp)),
+      ("right".to_string(), n),
     ]);
   
     return Node {
