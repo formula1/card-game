@@ -162,10 +162,11 @@ impl SymbolCollection {
         id, nud, lbp, led
       });
     } else {
-      let sym = maybe_sym.unwrap();
-      sym.nud = if !sym.nud.is_none() { sym.nud } else { nud };
-      sym.lbp = if !sym.lbp.is_none() { sym.lbp } else { lbp };
-      sym.led = if !sym.led.is_none() { sym.led } else { led };
+      panic!("symbol {} already set", id_str);
+      let mut sym = maybe_sym.unwrap();
+      if sym.nud.is_none() { sym.nud = nud; }
+      if sym.lbp.is_none() { sym.lbp = lbp; }
+      if sym.led.is_none() { sym.led = led; }
     }
   }
   fn interpretToken(self, token: Token) -> SymbolAndToken {

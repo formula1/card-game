@@ -30,14 +30,14 @@ impl LedListener for EqualLed {
           panic!("there should be args when making a call");
         }
         let args = left.args.unwrap();
-        for arg in args {
-          match arg.node_type {
-            NodeType::IdentifierNode => {}
-            _ => {
-              panic!("invalid argument name");
-            }
-          }
-        }
+        // for arg in args {
+        //   match arg.node_type {
+        //     NodeType::IdentifierNode => {}
+        //     _ => {
+        //       panic!("invalid argument name");
+        //     }
+        //   }
+        // }
         node.args = Some(args);
       }
       NodeType::IdentifierNode => {}
