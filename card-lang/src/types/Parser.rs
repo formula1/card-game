@@ -20,11 +20,11 @@ pub struct Symbol {
 }
 
 pub trait NudListener {
-  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node;
+  fn run(&self, symtok: SymbolAndToken, parser: Parser)->Node;
 }
 
 pub trait LedListener {
-  fn run(self, node: Node, parser: Parser)->Node;
+  fn run(&self, node: Node, parser: Parser)->Node;
 }
 
 pub struct Prefix {

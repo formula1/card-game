@@ -10,7 +10,7 @@ use crate::types::ReusedStructs::NodeType;
 pub struct EqualLed{}
 
 impl LedListener for EqualLed {
-  fn run(self, left: Node, parser: Parser) -> Node {
+  fn run(&self, left: Node, parser: Parser) -> Node {
     let name = left.values.unwrap().get("name").unwrap().clone();
     let (s, n) = parser.expression(2);
     let mut node = Node {

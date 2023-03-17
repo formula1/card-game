@@ -165,12 +165,12 @@ impl Evaluator {
     return (e, n);
   }
 
-  fn nodeToString(self, node: Node) -> String {
+  fn nodeToString(node: Node) -> String {
     if !matches!(node.node_type, NodeType::ValueNode) {
       panic!("node_type is not ValueNode");
     }
     let values = node.values.unwrap();
-    match values["type"].as_str() {
+    match values.get(&"type".to_string()).unwrap().as_str() {
       "boolean" => {
         if values["is_float"].as_str() == "1" {
           return "True".to_string();
@@ -193,7 +193,7 @@ impl Evaluator {
       }
     }
   }
-  fn valueToString(self, val: Value) -> String{
+  fn valueToString(val: Value) -> String{
     match val {
       Value::BooleanValue(v) => {
         return if v { "True".to_string() } else { "False".to_string() };

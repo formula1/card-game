@@ -11,7 +11,7 @@ use crate::types::ReusedStructs::Token;
 pub struct IdentifierNud {}
 
 impl NudListener for IdentifierNud {
-  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
+  fn run(&self, symtok: SymbolAndToken, parser: Parser)->Node{
     let token = symtok.token.clone();
     if !isOpener(symtok.token) {
       return Node {

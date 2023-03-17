@@ -9,7 +9,7 @@ use crate::types::ReusedStructs::NodeType;
 pub struct NumberNud {}
 
 impl NudListener for NumberNud {
-  fn run(self, symtok: SymbolAndToken, _: Parser)->Node{
+  fn run(&self, symtok: SymbolAndToken, _: Parser)->Node{
     return Node {
       node_type: NodeType::ValueNode,
       values: Some(HashMap::from([
