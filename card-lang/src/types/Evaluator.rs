@@ -65,60 +65,76 @@ impl Evaluator {
 
   pub fn evaluate(self, parseTree: Vec<Node>) -> String{
     let mut output = "".to_string();
+    let mut e: Self = self;
+    let mut value: Node;
     for node in parseTree {
-      let value = self.parseNode(node);
+      (e, value) = e.parseNode(node);
       output.push_str(Evaluator::nodeToString(value).as_str());
       output.push_str("\n");
     }
     return output;
   }
 
-  fn parseNode(mut self, node: Node) -> Node{
-    return match node.node_type {
+  fn parseNode(self, node: Node) -> (Self, Node) {
+    let mut e: Evaluator = self;
+    let n = match node.node_type {
       NodeType::ValueNode=>{
-        return node
+        node
       }
       NodeType::OperatorNode=>{
-        let op_name = node.values.unwrap().get(&"type".to_string()).unwrap();
-        let op = self.operators[&op_name.to_string()];
-        let left = node.branches.unwrap().get(&"left".to_string());
-        let right = node.branches.unwrap().get(&"right".to_string()).unwrap();
+        let values = node.values.unwrap();
+        let op_name = values.get(&"type".to_string()).unwrap();
+
+        let branches = node.branches.unwrap();
+        let left = branches.get(&"left".to_string());
+        let right: Node;
+        (e, right) = self.parseNode(branches.get(&"right".to_string()).unwrap().clone());
         if left.is_none() {
-          self.prefixes[op_name].runner.run(self.parseNode(*right))
+          let prefixRunner = e.prefixes.get(op_name).unwrap().runner;
+          prefixRunner.run(right)
         } else {
-          return self.operators[op_name].runner.run(
-            self.parseNode(*left.unwrap()),
-            self.parseNode(*right)
-          );
+          let op = e.operators.get(&op_name.to_string()).unwrap().runner;
+          let node: Node;
+          (e, node) = e.parseNode(left.unwrap().clone());
+
+          return (e, op.run(node, right));
         }
       }
       NodeType::IdentifierNode=>{
         let name = node.values.unwrap().get("value").unwrap().clone();
-        if self.arguments.contains_key(&name) {
-          return self.arguments.get(&name).unwrap().value.clone();
-        } else if self.constants.contains_key(&name) {
-          return self.constants.get(&name).unwrap().value.clone();
-        } else if self.variables.contains_key(&name) {
-          return self.variables.get(&name).unwrap().value.clone();
+        let arguments = e.arguments;
+        let constants = e.constants;
+        let variables = e.variables;
+        if arguments.contains_key(&name) {
+          return (e, arguments.get(&name).unwrap().value.clone());
+        } else if constants.contains_key(&name) {
+          return (e, constants.get(&name).unwrap().value.clone());
+        } else if variables.contains_key(&name) {
+          return (e, variables.get(&name).unwrap().value.clone());
         } else {
           panic!("identifier {} doesn't exist", name);
         }
       }
       NodeType::AssignNode=>{
         let name = node.values.unwrap().get(&"name".to_string()).unwrap().clone();
-        let value = self.parseNode(
+        let value: Node;
+        (e, value) = e.parseNode(
           node.branches.unwrap().get(&"value".to_string()).unwrap().clone()
         );
-        self.variables.insert(name, Variable{ id: name, value: value.clone() });
-        return value
+        e.variables.insert(name.clone(), Variable{ id: name.clone(), value: value.clone() });
+        return (e, value)
       }
       NodeType::CallNode=>{
-        let vals: Vec<Node> = node.args.unwrap().iter()
-        .map(|arg: &Node|-> Node { return self.parseNode(arg.clone()) })
-        .collect();
-        return self.functions.get(
+        let mut vals: Vec<Node> = vec![];
+        for arg in node.args.unwrap().iter() {
+          let result: Node;
+          (e, result) = e.parseNode(arg.clone());
+          vals.push(result);
+        }
+        let funk = e.functions.get(
           &node.values.unwrap().get("name").unwrap().clone()
-        ).unwrap().runner.run(vals);
+        ).unwrap();
+        return (e, funk.runner.run(vals));
       }
       NodeType::FunctionNode=>{
         panic!("Haven't enabled function nodes");
@@ -146,6 +162,7 @@ impl Evaluator {
         panic!("invalid node type")
       }
     };
+    return (e, n);
   }
 
   fn nodeToString(self, node: Node) -> String {

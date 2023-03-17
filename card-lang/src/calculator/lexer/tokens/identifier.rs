@@ -29,17 +29,18 @@ pub fn matchesChar(input: char) -> bool{
 }
 
 fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String> {
+  let mut l = lexer;
   let mut c = initial_char;
   let mut identity = "".to_string();
   identity.push(c);
   loop {
-    c = lexer.advance();
+    (l, c) = l.advance();
     if !matchesChar(c) {
       break;
     }
     identity.push(c);
   }
-  lexer.addToken(HashMap::from([("name".to_string(), identity.to_owned())]));
-  lexer.advance();
+  l = l.addToken(HashMap::from([("name".to_string(), identity.to_owned())]));
+  l.advance();
   return Ok(());
 }

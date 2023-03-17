@@ -27,11 +27,12 @@ pub fn matchesChar(input: char) -> bool{
 
 fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String>{
   let mut c: char = initial_char;
+  let mut l = lexer;
   let mut num = "".to_owned();
   num.push(c);
   let mut is_float = "0";
   loop {
-    c = lexer.advance();
+    (l, c) = l.advance();
     if !matchesChar(c) { break; }
     num.push(c);
   }
@@ -39,11 +40,11 @@ fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String>{
     is_float = "1";
     loop {
       num.push(c);
-      c = lexer.advance();
+      (l, c) = l.advance();
       if !matchesChar(c) { break; }
     }
   }
-  lexer.addToken(
+  l.addToken(
     HashMap::from([
       ("is_float".to_string(), is_float.to_string()),
       ("value".to_string(), num)

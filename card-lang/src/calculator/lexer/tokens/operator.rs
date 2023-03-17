@@ -26,10 +26,10 @@ pub fn matchesChar(input: char) -> bool{
 }
 
 fn handleChar(c: char, mut lexer: Lexer)-> Result<(), String> {
-  lexer.addToken(
+  let l = lexer.addToken(
     HashMap::from([("value".to_string(), c.to_string())])
   );
-  lexer.advance();
+  l.advance();
   return Ok(());
 }
 

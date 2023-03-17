@@ -75,27 +75,30 @@ impl Parser {
   }
 
   pub fn expression(self, rbp: u128) -> (Self, Node) {
-   let (s1, t1) = self.token();
-    s1.advance();
+    let mut s: Self = self;
+    let t1: SymbolAndToken;
+    (s, t1) = s.token();
+    (s, _) = s.advance();
     let nud = t1.symbol.nud;
     if nud.is_none() {
       panic!("Unexpected token: {}", t1.token.token_type.as_str());
     }
-    let mut left = nud.unwrap().run(t1, self);
+    let mut left = nud.unwrap().run(t1, s);
     loop {
-      let (s, t) = s1.token();
+      let t: SymbolAndToken;
+      (s, t) = s.token();
       if rbp < t.symbol.lbp.unwrap() { break; }
-      let token = self.token();
-      self.advance();
+      (s, _) = s.token();
+      (s, _) = s.advance();
       let led_op = t.symbol.led;
       if led_op.is_none() {
         panic!("Unexpected token: {}", t.token.token_type.as_str());
       }
       let led = led_op.unwrap();
 
-      left = led.run(left, self);
+      left = led.run(left, s);
     };
-    return (self, left);
+    return (s, left);
   }
 
   pub fn parse(mut self, tokens: Vec<Token>)->Vec<Node>{
@@ -104,7 +107,8 @@ impl Parser {
     let mut s = self;
     let mut n: Node;
     loop {
-      let (s, t) = self.token();
+      let t:SymbolAndToken;
+      (s, t) = s.token();
       if t.token.token_type == "(end)" { break }
       (s, n) = s.expression(0);
       parseTree.push(n);
@@ -185,10 +189,10 @@ struct DefaultPrefix {
 }
 
 impl NudListener for DefaultPrefix {
-  fn run(self, symtok: SymbolAndToken, parser: Parser)->Node{
+  fn run(&self, symtok: SymbolAndToken, parser: Parser)->Node{
 
-    let values = HashMap::from([("type".to_string(), self.symbol_id)]);
-    let (s, n) = self.parser.expression(self.rbp);
+    let values = HashMap::from([("type".to_string(), self.symbol_id.clone())]);
+    let (s, n) = parser.expression(self.rbp);
     let branches = HashMap::from([
       ("right".to_string(), n),
     ]);
@@ -211,10 +215,10 @@ struct DefaultInfix {
 }
 
 impl LedListener for DefaultInfix {
-  fn run(self, left: Node, parser: Parser)->Node{
+  fn run(&self, left: Node, parser: Parser)->Node{
   
-    let values = HashMap::from([("type".to_string(), self.symbol_id)]);
-    let (s, n ) = self.parser.expression(self.rbp);
+    let values = HashMap::from([("type".to_string(), self.symbol_id.clone())]);
+    let (s, n ) = parser.expression(self.rbp);
     let branches = HashMap::from([
       ("left".to_string(), left),
       ("right".to_string(), n),
