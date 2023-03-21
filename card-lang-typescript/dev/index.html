@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    #container{width:100%;height:700px;display:flex;}
+    #container>*{flex-grow: 1;height: 100%;}
+
+    #test{width:100%;}
+    #test>button{width:100%;}
+  </style>
+</head>
+<body>
+  <div id="test">
+    <div id="container">
+      <textarea id="input"></textarea>
+      <pre id="output"></pre>
+    </div>
+    <button id="run">Run</buutton>
+  </div>
+  <script type="text/javascript" src="/hidden.build.js" ></script>
+  <script type="text/javascript">
+    const input = document.querySelector("#input");
+    const runButton = document.querySelector("#run");
+    var run = require("init").run;
+    const output = document.querySelector("#output");
+    runButton.addEventListener("click", (e)=>{
+      e.preventDefault()
+      console.log("clicked")
+      try {
+        var inputText = input.value;
+        console.log("got input text:", inputText)
+        var outputText = run(inputText);
+        console.log("ran translator:", outputText)
+        output.textContent = outputText;
+        console.log("set output:", output.textContent)
+      }catch(e){
+        output.textContent = `ERROR: ${e.message}\n${e.stack}`;
+        throw e;
+      }
+    })
+  </script>
+</body>
+</html>
