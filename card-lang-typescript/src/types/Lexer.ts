@@ -26,15 +26,20 @@ export class Lexer {
     let tokenizers = this.tokenizers;
     var controller = this.controller;
 
-    while(this.char_index < this.input_chars.length){
+    while(true){
+      var char = controller.current_char;
       var usedTokenizer = false;
+      if(typeof char == "undefined"){
+        break;
+      }
       for(let t of tokenizers){
-        if(!t.matchesChar(controller.current_char)){
+        if(!t.matchesChar(char)){
           continue;
         }
         usedTokenizer = true;
         this.current_tokenizer = t.token_type;
-        t.handleChar(controller.current_char, controller);
+        t.handleChar(char, controller);
+        break;
       }
       if(usedTokenizer == false){
         throw new Error(`invalid token ${controller.current_char}`);
@@ -46,10 +51,13 @@ export class Lexer {
 
 export class LexerController {
   constructor(private lexer: Lexer){}
-  get current_char(){
+  get current_char(): string | void {
     return this.lexer.input_chars[this.lexer.char_index];
   }
-  advance(): string{
+  get finished(){
+    return this.lexer.char_index >= this.lexer.input_chars.length;    
+  }
+  advance(){
     this.lexer.char_index++
     return this.current_char;
   }

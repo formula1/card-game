@@ -21,11 +21,11 @@ function matchesChar(input: string){
 }
 
 function handleChar(initial_char: string, lexer: LexerController) {
-  var c = initial_char;
+  var c: string | void;
   let identity = initial_char;
   while(true) {
     c = lexer.advance();
-    if(!matchesChar(c)){ break; }
+    if(typeof c == "undefined" || !matchesChar(c)){ break; }
     identity += c;
   }
   lexer.addToken({ name: identity });
