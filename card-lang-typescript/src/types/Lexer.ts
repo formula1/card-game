@@ -66,7 +66,7 @@ export class LexerController {
       token_type: this.lexer.current_tokenizer,
       values: values
     });
-    return self;
+    return this;
   }
 }
 
