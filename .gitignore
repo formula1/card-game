@@ -5,6 +5,14 @@ Cargo.lock
 **/*.rs.bk
 *.pdb
 
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+dist
+.nyc_output
+
 # OSX
 #
 .DS_Store
@@ -36,12 +44,6 @@ build/
 local.properties
 *.iml
 *.hprof
-
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
 
 # BUCK
 buck-out/
