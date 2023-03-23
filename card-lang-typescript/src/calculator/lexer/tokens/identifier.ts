@@ -29,5 +29,4 @@ function handleChar(initial_char: string, lexer: LexerController) {
     identity += c;
   }
   lexer.addToken({ name: identity });
-  lexer.advance();
 }
