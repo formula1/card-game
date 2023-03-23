@@ -1,7 +1,7 @@
 import { LexerController, Tokenizer } from "../../../types/Lexer";
 
 import { matchesChar as opMatchesChar } from "./operator";
-import { matchesChar as digMatchesChar } from "./digit";
+import { matchesChar as digMatchesChar } from "./number";
 import { matchesChar as wsMatchesChar } from "./whitespace";
 
 export class IdentifierTokenizer implements Tokenizer {

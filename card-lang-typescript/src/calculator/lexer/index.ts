@@ -1,6 +1,6 @@
 import { Lexer } from "../../types/Lexer";
 
-import { DigitTokenizer } from "./tokens/digit";
+import { DigitTokenizer } from "./tokens/number";
 import { IdentifierTokenizer } from "./tokens/identifier";
 import { OperatorTokenizer } from "./tokens/operator";
 import { WhiteSpaceTokenizer } from "./tokens/whitespace";
