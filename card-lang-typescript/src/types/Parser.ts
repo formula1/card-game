@@ -88,7 +88,7 @@ export class ParserController {
     var left = nud.run(t1, this);
     while(true) {
       let t: SymbolAndToken = this.token();
-      if(rbp < (t.symbol.lbp || 0)) { break; }
+      if(rbp >= (t.symbol.lbp || 0)) { break; }
       this.advance();
 
       let led = t.symbol.led;
