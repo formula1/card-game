@@ -16,18 +16,29 @@ export class IdentifierNud implements NudListener {
     }
 
     var args: Array<LangNode> = [];
-    let t = parser.nextToken();
+    let t: void | Token = parser.nextToken();
+    if(typeof t == "undefined"){
+      throw new Error("expected a token, reached end of token list");
+    }
+
     if(isCloser(t)){
       parser.advance();
     } else {
       while(true){
         parser.advance();
         args.push(parser.expression(2));
-        let t: SymbolAndToken;
-        if(!isComma(parser.token().token)){ break }
+        let s = parser.token();
+        if(typeof s == "undefined"){
+          throw new Error("expected token, reached end of list");
+        }
+        if(!isComma(s.token)){ break }
       }
-      if(!isCloser(parser.token().token)){
-        var value = parser.token().token.values.value;
+      let s = parser.token();
+      if(typeof s == "undefined"){
+        throw new Error("expected closer, reached end of list");
+      }
+      if(!isCloser(s.token)){
+        var value = s.token.values.value;
         throw new Error(`Expected closing parenthesis ')' got ${value}`);
       };
     }

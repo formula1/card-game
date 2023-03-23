@@ -45,7 +45,8 @@ export class Parser {
 
     while(controller.i < tokens.length) {
       var t = controller.token();
-      if(t.token.token_type == "(end)") { break }
+      if(typeof t == "undefined") { break; }
+      if(t.token.token_type == "(end)") { break; }
       let n = controller.expression(0);
       parseTree.push(n);
     }
@@ -60,26 +61,32 @@ export class ParserController {
   i: number = 0;
   constructor(private parser: Parser){}
 
-  token(): SymbolAndToken {
+  token(): void | SymbolAndToken {
+    var token = this.parser.tokens[this.i];
+    if(typeof token == "undefined"){
+      return void 0;
+    }
     return (
-      this.parser.symbols.interpretToken(this.parser.tokens[this.i])
+      this.parser.symbols.interpretToken(token)
     );
   }
-  nextToken(): Token {
+  nextToken(): void | Token {
     return (
       this.parser.tokens[this.i + 1]
     );
   }
-  advance(): SymbolAndToken {
+  advance() {
     this.i += 1;
     if(this.i == this.parser.tokens.length){
-      throw new Error("no tokens left")
+      console.warn("no tokens left")
     }
-    return this.token()
   }
 
   expression(rbp: number): LangNode {
     var t1 = this.token();
+    if(typeof t1 == "undefined"){
+      throw new Error("expected token, got undefined");
+    }
     this.advance();
     let nud = t1.symbol.nud;
     if(typeof nud == "undefined"){
@@ -87,7 +94,8 @@ export class ParserController {
     }
     var left = nud.run(t1, this);
     while(true) {
-      let t: SymbolAndToken = this.token();
+      let t = this.token();
+      if(typeof t == "undefined"){ break; }
       if(rbp >= (t.symbol.lbp || 0)) { break; }
       this.advance();
 
