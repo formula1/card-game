@@ -78,7 +78,7 @@ export class ParserController {
   advance() {
     this.i += 1;
     if(this.i == this.parser.tokens.length){
-      console.warn("no tokens left")
+      // console.warn("no tokens left")
     }
   }
 
