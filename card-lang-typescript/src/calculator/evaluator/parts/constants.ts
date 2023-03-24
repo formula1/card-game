@@ -8,6 +8,10 @@ export function getConstants(): Array<Constant> {
       value: packResult(Math.PI)
     },
     {
+      id: "tau",
+      value: packResult(2 * Math.PI)
+    },
+    {
       id: "e",
       value: packResult(Math.E)
     }
