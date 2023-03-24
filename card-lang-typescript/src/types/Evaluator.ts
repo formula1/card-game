@@ -30,13 +30,9 @@ export class Evaluator {
   }
 
   evaluate(parseTree: Array<LangNode>): string{
-    var output = "";
-    for(let node of parseTree){
-      let value = this.parseNode(node);
-      output += Evaluator.nodeToString(value);
-      output += "\n";
-    }
-    return output;
+    return parseTree.map((node)=>{
+      return Evaluator.nodeToString(this.parseNode(node))
+    }).join("\n")
   }
 
   private parseNode(node: LangNode): ValueNode {
