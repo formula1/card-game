@@ -8,7 +8,15 @@ export class IdentifierNud implements NudListener {
     if(name == void 0){
       throw new Error("Needed a name for identifier");
     }
-    if(!isOpener(symtok.token)){
+    // parser.advance()
+    var nextTok = parser.token();
+    if(typeof nextTok == "undefined"){
+      return {
+        node_type: LangNodeType.IdentifierNode,
+        values: { name },
+      }
+    }
+    if(!isOpener(nextTok.token)){
       return {
         node_type: LangNodeType.IdentifierNode,
         values: { name },
