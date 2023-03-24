@@ -5,9 +5,15 @@ import { getFunctions } from "./parts/functions";
 import { getOperators } from "./parts/operators";
 import { getPrefixes } from "./parts/prefixes";
 
-export const CALCULATOR_EVALUATOR = new Evaluator(
-  getConstants(),
-  getPrefixes(),
-  getOperators(),
-  getFunctions(),
-)
+export class CalculatorEvaluator extends Evaluator {
+  constructor(){
+    super(
+      getConstants(),
+      getPrefixes(),
+      getOperators(),
+      getFunctions(),
+    )
+  }
+}
+
+export const CALCULATOR_EVALUATOR = new CalculatorEvaluator();

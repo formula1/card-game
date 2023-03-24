@@ -1,21 +1,11 @@
 const tap = require("tap");
-const {
-  CALCULATOR_LEXER,
-  CALCULATOR_PARSER,
-  CALCULATOR_EVALUATOR,
-} = require("../dist");
+const assert = require("node:assert");
+const { run } = require("../dist");
 
 tap.test("basic operations", (top)=>{
-  console.log(
-    CALCULATOR_LEXER,
-    CALCULATOR_PARSER,
-    CALCULATOR_EVALUATOR,
-  )
   function testOp(label, input, expected){
     return top.test(label, (t)=>{
-      var tokens = CALCULATOR_LEXER.tokenizeString(input);
-      var nodes = CALCULATOR_PARSER.parse(tokens);
-      var output = CALCULATOR_EVALUATOR.evaluate(nodes);
+      var output = run(input);
       t.equal(expected, output);
       t.end()
     });
