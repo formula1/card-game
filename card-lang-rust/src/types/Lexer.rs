@@ -23,49 +23,47 @@ impl Lexer<'_> {
       tokens: vec![]
     };
   }
-  fn reset(mut self)->Self{
+  fn reset(&self)->(){
     self.current_tokenizer = "".to_string();
     self.input_chars = "".chars();
     self.current_char = None;
     self.tokens = vec![];
-    return self;
   }
-  pub fn advance(mut self)->(Self, char){
+  pub fn advance(&self)->char{
     let c = self.input_chars.next();
     self.current_char = c;
-    return (self, c.unwrap());
+    return c.unwrap();
   }
-  pub fn addToken(mut self, values: HashMap<String, String>)->Self{
+  pub fn addToken(&self, values: HashMap<String, String>)->(){
     self.tokens.push(Token {
       token_type: self.current_tokenizer.clone(),
       values: values
     });
-    return self;
   }
-  pub fn tokenizeString(mut self, input_str: String) -> Vec<Token>{
+  pub fn tokenizeString(&self, input_str: String) -> Vec<Token>{
     let mut s = self.reset();
-    let tokenizers = &s.tokenizers;
-    s.input_chars = input_str.chars();
-    (s, _) = s.advance();
+    let tokenizers = &self.tokenizers;
+    self.input_chars = input_str.chars();
+    self.advance();
 
 
-    while s.current_char != None {
+    while self.current_char != None {
       let mut usedTokenizer = false;
       for t in tokenizers {
-        if !t.matchesChar(s.current_char.clone().unwrap()) {
+        if !t.matchesChar(self.current_char.clone().unwrap()) {
           continue;
         }
         usedTokenizer = true;
-        s.current_tokenizer = t.token_type();
-        if let Err(e) = t.handleChar(s.current_char.clone().unwrap(), s) {
+        self.current_tokenizer = t.token_type();
+        if let Err(e) = t.handleChar(self.current_char.clone().unwrap(), self) {
           panic!("Error parsing the code");
         }
       }
       if usedTokenizer == false {
-        panic!("invalid token {}", s.current_char.unwrap());
+        panic!("invalid token {}", self.current_char.unwrap());
       }
     }
-    return s.tokens;
+    return self.tokens;
   }
 
 }
@@ -74,7 +72,7 @@ pub trait Tokenizer {
   fn token_type(&self)-> String;
   fn matchesChar(&self, c: char)->bool;
   fn handleChar(
-    &self, c: char, lexer: Lexer
+    &self, c: char, lexer: &Lexer
   )->Result<(), String>;
 }
 

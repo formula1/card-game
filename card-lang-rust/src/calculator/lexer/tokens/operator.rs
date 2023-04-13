@@ -14,7 +14,7 @@ impl Tokenizer for OperatorTokenizer {
     return matchesChar(input)
   }
   fn handleChar(
-    &self, c: char, lexer: Lexer
+    &self, c: char, lexer: &Lexer
   )->Result<(), String>{
     return handleChar(c, lexer);
   }
@@ -25,11 +25,11 @@ pub fn matchesChar(input: char) -> bool{
   return regex_is_match!(r"[+\-*/^%=(),]", input.to_string().as_str());
 }
 
-fn handleChar(c: char, mut lexer: Lexer)-> Result<(), String> {
-  let l = lexer.addToken(
+fn handleChar(c: char, mut lexer: &Lexer)-> Result<(), String> {
+  lexer.addToken(
     HashMap::from([("value".to_string(), c.to_string())])
   );
-  l.advance();
+  lexer.advance();
   return Ok(());
 }
 

@@ -14,7 +14,7 @@ impl Tokenizer for DigitTokenizer {
     return matchesChar(input)
   }
   fn handleChar(
-    &self, c: char, lexer: Lexer
+    &self, c: char, lexer: &Lexer
   )->Result<(), String>{
     return handleChar(c, lexer);
   }
@@ -25,14 +25,14 @@ pub fn matchesChar(input: char) -> bool{
   return regex_is_match!(r"[0-9]", input.to_string().as_str());
 }
 
-fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String>{
+fn handleChar(initial_char: char, mut lexer: &Lexer) -> Result<(), String>{
   let mut c: char = initial_char;
   let mut l = lexer;
   let mut num = "".to_owned();
   num.push(c);
   let mut is_float = "0";
   loop {
-    (l, c) = l.advance();
+    c = l.advance();
     if !matchesChar(c) { break; }
     num.push(c);
   }
@@ -40,7 +40,7 @@ fn handleChar(initial_char: char, mut lexer: Lexer) -> Result<(), String>{
     is_float = "1";
     loop {
       num.push(c);
-      (l, c) = l.advance();
+      c = l.advance();
       if !matchesChar(c) { break; }
     }
   }

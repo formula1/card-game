@@ -13,7 +13,7 @@ impl Tokenizer for WhiteSpaceTokenizer {
     return matchesChar(input)
   }
   fn handleChar(
-    &self, c: char, lexer: Lexer
+    &self, c: char, lexer: &Lexer
   )->Result<(), String>{
     return handleChar(c, lexer);
   }
@@ -23,7 +23,7 @@ pub fn matchesChar(input: char) -> bool{
   return regex_is_match!(r"[\s]", input.to_string().as_str());
 }
 
-fn handleChar(_: char, mut lexer: Lexer) ->Result<(), String> {
+fn handleChar(_: char, mut lexer: &Lexer) ->Result<(), String> {
   lexer.advance();
   return Ok(());
 }
