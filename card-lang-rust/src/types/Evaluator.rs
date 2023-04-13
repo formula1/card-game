@@ -63,20 +63,18 @@ impl Evaluator {
     self.functions.insert(funk.id.clone(), funk);
   }
 
-  pub fn evaluate(self, parseTree: Vec<Node>) -> String{
+  pub fn evaluate(&self, parseTree: Vec<Node>) -> String{
     let mut output = "".to_string();
-    let mut e: Self = self;
     let mut value: Node;
     for node in parseTree {
-      (e, value) = e.parseNode(node);
+      value = self.parseNode(node);
       output.push_str(Evaluator::nodeToString(value).as_str());
       output.push_str("\n");
     }
     return output;
   }
 
-  fn parseNode(self, node: Node) -> (Self, Node) {
-    let mut e: Evaluator = self;
+  fn parseNode(&self, node: Node) -> Node {
     let n = match node.node_type {
       NodeType::ValueNode=>{
         node
@@ -88,29 +86,29 @@ impl Evaluator {
         let branches = node.branches.unwrap();
         let left = branches.get(&"left".to_string());
         let right: Node;
-        (e, right) = self.parseNode(branches.get(&"right".to_string()).unwrap().clone());
+        right = self.parseNode(branches.get(&"right".to_string()).unwrap().clone());
         if left.is_none() {
-          let prefixRunner = e.prefixes.get(op_name).unwrap().runner;
+          let prefixRunner = &self.prefixes.get(op_name).unwrap().runner;
           prefixRunner.run(right)
         } else {
-          let op = e.operators.get(&op_name.to_string()).unwrap().runner;
+          let op = &self.operators.get(&op_name.to_string()).unwrap().runner;
           let node: Node;
-          (e, node) = e.parseNode(left.unwrap().clone());
+          node = self.parseNode(left.unwrap().clone());
 
-          return (e, op.run(node, right));
+          return op.run(node, right);
         }
       }
       NodeType::IdentifierNode=>{
         let name = node.values.unwrap().get("value").unwrap().clone();
-        let arguments = e.arguments;
-        let constants = e.constants;
-        let variables = e.variables;
+        let arguments = &self.arguments;
+        let constants = &self.constants;
+        let variables = &self.variables;
         if arguments.contains_key(&name) {
-          return (e, arguments.get(&name).unwrap().value.clone());
+          return arguments.get(&name).unwrap().value.clone();
         } else if constants.contains_key(&name) {
-          return (e, constants.get(&name).unwrap().value.clone());
+          return constants.get(&name).unwrap().value.clone();
         } else if variables.contains_key(&name) {
-          return (e, variables.get(&name).unwrap().value.clone());
+          return variables.get(&name).unwrap().value.clone();
         } else {
           panic!("identifier {} doesn't exist", name);
         }
@@ -118,23 +116,24 @@ impl Evaluator {
       NodeType::AssignNode=>{
         let name = node.values.unwrap().get(&"name".to_string()).unwrap().clone();
         let value: Node;
-        (e, value) = e.parseNode(
+        value = self.parseNode(
           node.branches.unwrap().get(&"value".to_string()).unwrap().clone()
         );
-        e.variables.insert(name.clone(), Variable{ id: name.clone(), value: value.clone() });
-        return (e, value)
+        let vars = self.variables;
+        vars.insert(name.clone(), Variable{ id: name.clone(), value: value.clone() });
+        return value
       }
       NodeType::CallNode=>{
         let mut vals: Vec<Node> = vec![];
         for arg in node.args.unwrap().iter() {
           let result: Node;
-          (e, result) = e.parseNode(arg.clone());
+          result = self.parseNode(arg.clone());
           vals.push(result);
         }
-        let funk = e.functions.get(
+        let funk = self.functions.get(
           &node.values.unwrap().get("name").unwrap().clone()
         ).unwrap();
-        return (e, funk.runner.run(vals));
+        return funk.runner.run(vals);
       }
       NodeType::FunctionNode=>{
         panic!("Haven't enabled function nodes");
@@ -162,7 +161,7 @@ impl Evaluator {
         panic!("invalid node type")
       }
     };
-    return (e, n);
+    return n;
   }
 
   fn nodeToString(node: Node) -> String {
