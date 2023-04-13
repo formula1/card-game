@@ -23,25 +23,25 @@ impl Lexer<'_> {
       tokens: vec![]
     };
   }
-  fn reset(&self)->(){
+  fn reset(&mut self)->(){
     self.current_tokenizer = "".to_string();
     self.input_chars = "".chars();
     self.current_char = None;
     self.tokens = vec![];
   }
-  pub fn advance(&self)->char{
+  pub fn advance(&mut self)->char{
     let c = self.input_chars.next();
     self.current_char = c;
     return c.unwrap();
   }
-  pub fn addToken(&self, values: HashMap<String, String>)->(){
+  pub fn addToken(&mut self, values: HashMap<String, String>)->(){
     self.tokens.push(Token {
       token_type: self.current_tokenizer.clone(),
       values: values
     });
   }
-  pub fn tokenizeString(&self, input_str: String) -> Vec<Token>{
-    let mut s = self.reset();
+  pub fn tokenizeString(&mut self, input_str: String) -> Vec<Token>{
+    self.reset();
     let tokenizers = &self.tokenizers;
     self.input_chars = input_str.chars();
     self.advance();
@@ -63,7 +63,7 @@ impl Lexer<'_> {
         panic!("invalid token {}", self.current_char.unwrap());
       }
     }
-    return self.tokens;
+    return self.tokens.to_owned();
   }
 
 }
